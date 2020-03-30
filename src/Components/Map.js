@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
+import {
+  defaults as defaultInteractions,
+  DragRotateAndZoom
+} from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
-import XYZ from "ol/source/XYZ";
+import OSM from "ol/source/OSM";
 
 function SetMap() {
   new Map({
     target: "map",
+    interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
     layers: [
       new TileLayer({
-        source: new XYZ({
-          url: "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        })
+        source: new OSM()
       })
     ],
     view: new View({
