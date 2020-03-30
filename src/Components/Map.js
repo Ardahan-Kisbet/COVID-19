@@ -9,8 +9,10 @@ import {
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 
+var mapObj;
+
 function SetMap() {
-  new Map({
+  mapObj = new Map({
     target: "map",
     layers: [
       new TileLayer({

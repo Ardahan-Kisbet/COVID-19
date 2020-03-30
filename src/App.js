@@ -19,10 +19,10 @@ function App() {
                 <div>Exp:2</div>
               </div>
             </div>
-            <div className="w-100 flex-grow-1">
+            <div className="w-100 h-50">
               <Map></Map>
             </div>
-            <div className="h-25 d-flex flex-column">
+            <div className="d-flex flex-column flex-grow-1">
               <div>footer area (maybe for results)</div>
               <div id="location">Location: </div>
             </div>
