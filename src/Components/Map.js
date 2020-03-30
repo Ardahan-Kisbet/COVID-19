@@ -10,10 +10,8 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 
 function SetMap() {
-  console.log("test");
   new Map({
     target: "map",
-    interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
     layers: [
       new TileLayer({
         source: new OSM()
@@ -22,7 +20,8 @@ function SetMap() {
     view: new View({
       center: [0, 0],
       zoom: 2
-    })
+    }),
+    interactions: defaultInteractions().extend([new DragRotateAndZoom()])
   });
 }
 

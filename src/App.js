@@ -22,7 +22,10 @@ function App() {
             <div className="w-100 flex-grow-1">
               <Map></Map>
             </div>
-            <div className="h-25">footer area (maybe for results)</div>
+            <div className="h-25 d-flex flex-column">
+              <div>footer area (maybe for results)</div>
+              <div id="location">Location: </div>
+            </div>
           </div>
         </div>
       </div>

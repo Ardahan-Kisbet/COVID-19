@@ -1,5 +1,5 @@
 import axios from "axios";
 
-axios.get("http://ip-api.com/json").then(res => {
-  console.log(res.data.country);
+axios.get("https://ipapi.co/json/").then(res => {
+  document.getElementById("location").append(res.data.country_name);
 });
