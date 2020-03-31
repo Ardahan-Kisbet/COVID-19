@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Map from "./Components/Map";
+import { getTotalRepoCount } from "./main.js";
 
 function App() {
+  const [totalRepo, setTotalRepo] = useState(0);
+  useEffect(() => {
+    getTotalRepoCount().then(response => setTotalRepo(response));
+  }, []);
+
   return (
     <div>
       <div className="content">
@@ -15,7 +21,10 @@ function App() {
                 <div className="">Github Project Navigator Icon</div>
               </div>
               <div className="d-flex flex-column">
-                <div>Exp:1</div>
+                <div>
+                  Total count of COVID related repositories: {totalRepo}{" "}
+                  <span className="small">created after 01.01.2020</span>
+                </div>
                 <div>Exp:2</div>
               </div>
             </div>

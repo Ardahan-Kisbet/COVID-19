@@ -9,22 +9,24 @@ import {
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 
-var mapObj;
+var mapObj = null;
 
 function SetMap() {
-  mapObj = new Map({
-    target: "map",
-    layers: [
-      new TileLayer({
-        source: new OSM()
-      })
-    ],
-    view: new View({
-      center: [0, 0],
-      zoom: 2
-    }),
-    interactions: defaultInteractions().extend([new DragRotateAndZoom()])
-  });
+  if (mapObj == null) {
+    mapObj = new Map({
+      target: "map",
+      layers: [
+        new TileLayer({
+          source: new OSM()
+        })
+      ],
+      view: new View({
+        center: [0, 0],
+        zoom: 2
+      }),
+      interactions: defaultInteractions().extend([new DragRotateAndZoom()])
+    });
+  }
 }
 
 function MapObject() {
