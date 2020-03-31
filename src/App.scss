@@ -1,0 +1,49 @@
+// SASS
+
+@import "../node_modules/rfs/scss";
+
+.title {
+  @include font-size(2rem);
+}
+
+// CSS
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #181818;
+  color: white;
+}
+
+.title,
+.total-repo-count,
+#location {
+  color: greenyellow;
+}
+
+/* Change color when link element is hovered */
+.logo > a:hover > .svg path {
+  fill: royalblue;
+}
+
+.logo > a:not(:hover) > .svg path {
+  fill: greenyellow;
+}
+
+.logo {
+  height: 50px;
+}
+
+/* You need to select path element under your svg to able to set its fill property .logo > a:hover > .svg path */
+.svg path {
+  fill: greenyellow;
+}
