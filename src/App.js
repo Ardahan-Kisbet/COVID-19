@@ -3,6 +3,7 @@ import "./App.scss";
 
 // get map component
 import Map from "./Components/Map";
+import Map2 from "./Components/MapBackup";
 
 // get exported javascript functions
 import { getTotalRepoCount } from "./main.js";
@@ -37,6 +38,10 @@ function App() {
           </div>
           <div className="d-flex flex-column flex-grow-1">
             <div>TODO graph and more results</div>
+            <div className="h-100">
+              <Map2></Map2>
+            </div>
+
             <div id="location">Location: </div>
           </div>
           <div className="logo text-center h2 pb-3">
