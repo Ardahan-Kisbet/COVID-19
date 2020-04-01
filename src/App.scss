@@ -32,18 +32,13 @@ body {
 
 /* Change color when link element is hovered */
 .logo > a:hover > .svg path {
-  fill: royalblue;
+  fill: greenyellow;
 }
 
 .logo > a:not(:hover) > .svg path {
-  fill: greenyellow;
+  fill: white;
 }
 
 .logo {
   height: 50px;
-}
-
-/* You need to select path element under your svg to able to set its fill property .logo > a:hover > .svg path */
-.svg path {
-  fill: greenyellow;
 }
