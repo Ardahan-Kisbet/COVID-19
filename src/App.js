@@ -5,7 +5,7 @@ import "./App.scss";
 import Map from "./Components/Map";
 
 // get exported javascript functions
-import { getTotalRepoCount } from "./main.js";
+import { getTotalRepoCount } from "./githubData.js";
 
 // import github icon
 import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
@@ -13,7 +13,7 @@ import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
 function App() {
   const [totalRepo, setTotalRepo] = useState(0);
   useEffect(() => {
-    getTotalRepoCount().then(response => setTotalRepo(response));
+    getTotalRepoCount().then((response) => setTotalRepo(response));
   }, []);
 
   return (
@@ -23,7 +23,7 @@ function App() {
           <div>
             <div className="header-content d-flex justify-content-center">
               <div className="title mb-5">
-                Newly Created Repositories about COVID in 2020
+                Newly Created Github Repos about COVID in 2020
               </div>
             </div>
             <div className="d-flex flex-column">
