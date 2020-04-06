@@ -1,19 +1,44 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./App.scss";
 
 // get map component
 import Map from "./Components/Map";
 
 // get exported javascript functions
-import { getTotalRepoCount } from "./githubData.js";
+import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
 
 // import github icon
 import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
 
+const initialValueCountByMonth = [{ id: 0, value: 0 }];
+
 function App() {
   const [totalRepo, setTotalRepo] = useState(0);
+  const [countByMonths, setCountByMonths] = useState(initialValueCountByMonth);
+
   useEffect(() => {
     getTotalRepoCount().then((response) => setTotalRepo(response));
+
+    getRepoCounts()
+      .then(
+        axios.spread((...res) => {
+          const res1 = res[0];
+          const res2 = res[1];
+          const res3 = res[2];
+          const res4 = res[3];
+          const fetchedCountByMonth = [
+            { id: 1, value: res1.data.total_count },
+            { id: 2, value: res2.data.total_count },
+            { id: 3, value: res3.data.total_count },
+            { id: 4, value: res4.data.total_count },
+          ];
+          setCountByMonths(fetchedCountByMonth);
+        })
+      )
+      .catch((err) => {
+        console.log("error on getRepoCounts(): " + err);
+      });
   }, []);
 
   return (
@@ -36,10 +61,9 @@ function App() {
             <Map></Map>
           </div>
           <div className="d-flex flex-column flex-grow-1">
-            <div id="Jan"></div>
-            <div id="Feb"></div>
-            <div id="March"></div>
-            <div id="April"></div>
+            {countByMonths.map((countByMonth, index) => (
+              <div key={countByMonth.id}>{countByMonth.value}</div>
+            ))}
             <div id="location">Location: </div>
             <div id="info"></div>
           </div>
