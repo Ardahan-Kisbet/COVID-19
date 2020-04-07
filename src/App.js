@@ -23,16 +23,10 @@ function App() {
     getRepoCounts()
       .then(
         axios.spread((...res) => {
-          const res1 = res[0];
-          const res2 = res[1];
-          const res3 = res[2];
-          const res4 = res[3];
-          const fetchedCountByMonth = [
-            { id: 1, value: res1.data.total_count },
-            { id: 2, value: res2.data.total_count },
-            { id: 3, value: res3.data.total_count },
-            { id: 4, value: res4.data.total_count },
-          ];
+          var [...temp] = [...res];
+          const fetchedCountByMonth = temp.map((val, index) => {
+            return { id: index, value: val.data.total_count };
+          });
           setCountByMonths(fetchedCountByMonth);
         })
       )

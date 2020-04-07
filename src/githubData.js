@@ -35,6 +35,6 @@ export const getRepoCounts = () => {
       })
     )
     .catch((err) => {
-      console.log("error on axios.all");
+      console.log("error on axios.all --> " + err);
     });
 };
