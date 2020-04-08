@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Stroke, Style, Circle } from "ol/style";
+import { Stroke, Style, Circle, Fill } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
@@ -25,27 +25,28 @@ import { styleForCountry, styleForPoint, styleForHighlight } from "./styles";
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
 var map = null;
+var countryLayerSource = new VectorSource({
+  url: CountryGeoJson,
+  format: new GeoJSON(),
+});
+var countryLayer = new VectorLayer({
+  source: countryLayerSource,
+  style: function (feature) {
+    styleForCountry.getText().setText(feature.get("name"));
+    return styleForCountry;
+  },
+});
+var dataSource = new VectorSource({});
+
+var dataLayer = new VectorLayer({
+  source: dataSource,
+});
+
+var tileLayer = new TileLayer({
+  source: new OSM(),
+});
 
 function SetMap() {
-  var countryLayerSource = new VectorSource({
-    url: CountryGeoJson,
-    format: new GeoJSON(),
-  });
-
-  var countryLayer = new VectorLayer({
-    source: countryLayerSource,
-    style: function (feature) {
-      styleForCountry.getText().setText(feature.get("name"));
-      return styleForCountry;
-    },
-  });
-
-  var dataSource = new VectorSource({});
-
-  var dataLayer = new VectorLayer({
-    source: dataSource,
-  });
-
   // 38.9637° N, 35.2433° E TURKEY
   var index = 0;
   const locations = [
@@ -106,10 +107,6 @@ function SetMap() {
 
   dataSource.on("addfeature", function (e) {
     flash(e.feature);
-  });
-
-  var tileLayer = new TileLayer({
-    source: new OSM(),
   });
 
   if (map === null) {
@@ -174,9 +171,39 @@ function SetMap() {
 function MapObject() {
   // to run function only once give [] as second parameter
   //   useEffect(SetMap, []);
-  useEffect(SetMap);
+  useEffect(() => {
+    SetMap();
+  }, []);
 
-  return <div id="map" className="h-100"></div>;
+  const clicked = useCallback(() => {
+    var activatedLayer = new VectorLayer({
+      source: new VectorSource(),
+      map: map,
+      style: function (feature) {
+        styleForHighlight.getText().setText(feature.get("name"));
+        return styleForHighlight;
+      },
+    });
+
+    countryLayer.getSource().forEachFeature(function (feature) {
+      if (feature.get("name") === "Turkey") {
+        activatedLayer.getSource().addFeature(feature);
+      }
+
+      if (feature.get("name") === "Russia") {
+        activatedLayer.getSource().addFeature(feature);
+      }
+    });
+  }, []);
+
+  return (
+    <div className="h-100">
+      <div id="map" className="h-75"></div>
+      <div className="btn btn-info" id="testBtn" onClick={clicked}>
+        Test
+      </div>
+    </div>
+  );
 }
 
 export default MapObject;

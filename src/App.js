@@ -44,11 +44,12 @@ function App() {
             <div className="header-content d-flex justify-content-center">
               <div className="title mb-5">COVID Disease Tracker by Country</div>
             </div>
-            <div className="d-flex flex-column">
+            <div className="d-flex">
               <div className="total-repo-count">
                 Total number of COVID related repositories on Github:{" "}
                 {totalRepo}
               </div>
+              <div className="ml-auto" id="info"></div>
             </div>
           </div>
           <div className="w-100 h-50">
@@ -61,7 +62,6 @@ function App() {
               </div>
             ))}
             <div id="location">Location: </div>
-            <div id="info"></div>
           </div>
           <div className="logo text-center h2 pb-3">
             <a
