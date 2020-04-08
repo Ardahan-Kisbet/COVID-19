@@ -27,6 +27,8 @@ import {
   styleForDiseased,
 } from "./styles";
 
+import { getCoordinates } from "../data";
+
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
 var map = null;
@@ -51,69 +53,47 @@ var tileLayer = new TileLayer({
   source: new OSM(),
 });
 
-function SetMap() {
-  // 38.9637° N, 35.2433° E TURKEY
-  var index = 0;
-  const locations = [
-    { x: 35.2433, y: 38.9637 },
-    { x: Math.random() * 360 - 180, y: Math.random() * 180 - 90 },
-    { x: Math.random() * 360 - 180, y: Math.random() * 180 - 90 },
-  ];
+var duration = 3000;
+function flash(feature) {
+  var start = new Date().getTime();
+  var listenerKey = tileLayer.on("postrender", animate);
 
-  function addRandomFeature() {
-    var geom = new Point(fromLonLat([locations[index].x, locations[index].y]));
-    // var geom = new Point([locations[index].x, locations[index].y]);
-    var feature = new Feature(geom);
-    feature.setStyle(styleForPoint);
-    dataSource.addFeature(feature);
-    ++index;
-  }
+  function animate(event) {
+    var vectorContext = getVectorContext(event);
+    var frameState = event.frameState;
+    var flashGeom = feature.getGeometry().clone();
+    var elapsed = frameState.time - start;
+    var elapsedRatio = elapsed / duration;
+    // radius will be 5 at start and 30 at end.
+    var radius = easeOut(elapsedRatio) * 25 + 5;
+    var opacity = easeOut(1 - elapsedRatio);
 
-  // window.setInterval(addRandomFeature, 3000);
-  locations.forEach(() => {
-    setTimeout(addRandomFeature, 1000);
-  });
-
-  var duration = 3000;
-  function flash(feature) {
-    var start = new Date().getTime();
-    var listenerKey = tileLayer.on("postrender", animate);
-
-    function animate(event) {
-      var vectorContext = getVectorContext(event);
-      var frameState = event.frameState;
-      var flashGeom = feature.getGeometry().clone();
-      var elapsed = frameState.time - start;
-      var elapsedRatio = elapsed / duration;
-      // radius will be 5 at start and 30 at end.
-      var radius = easeOut(elapsedRatio) * 25 + 5;
-      var opacity = easeOut(1 - elapsedRatio);
-
-      var styleForFlash = new Style({
-        image: new Circle({
-          radius: radius,
-          stroke: new Stroke({
-            color: "rgba(255, 0, 0, " + opacity + ")",
-            width: 0.25 + opacity,
-          }),
+    var styleForFlash = new Style({
+      image: new Circle({
+        radius: radius,
+        stroke: new Stroke({
+          color: "rgba(255, 0, 0, " + opacity + ")",
+          width: 0.25 + opacity,
         }),
-      });
+      }),
+    });
 
-      vectorContext.setStyle(styleForFlash);
-      vectorContext.drawGeometry(flashGeom);
-      if (elapsed > duration) {
-        unByKey(listenerKey);
-        return;
-      }
-      // tell OpenLayers to continue postrender animation
-      map.render();
+    vectorContext.setStyle(styleForFlash);
+    vectorContext.drawGeometry(flashGeom);
+    if (elapsed > duration) {
+      unByKey(listenerKey);
+      return;
     }
+    // tell OpenLayers to continue postrender animation
+    map.render();
   }
+}
 
-  dataSource.on("addfeature", function (e) {
-    flash(e.feature);
-  });
+dataSource.on("addfeature", function (e) {
+  flash(e.feature);
+});
 
+function SetMap() {
   if (map === null) {
     map = new Map({
       target: "map",
@@ -190,8 +170,11 @@ function MapObject() {
       },
     });
 
+    // activatedLayer.getSource().forEachFeature(function (feature) {
+    //   activatedLayer.getSource().removeFeature(feature);
+    // });
+
     countryLayer.getSource().forEachFeature(function (feature) {
-      console.log(styleForDiseased);
       if (feature.get("name") === "Turkey") {
         activatedLayer.getSource().addFeature(feature);
       }
@@ -199,6 +182,25 @@ function MapObject() {
       if (feature.get("name") === "Russia") {
         activatedLayer.getSource().addFeature(feature);
       }
+    });
+
+    var index = 0;
+    const locations = getCoordinates();
+    function addRandomFeature() {
+      var geom = new Point(
+        fromLonLat([locations[index].x, locations[index].y])
+      );
+      // var geom = new Point([locations[index].x, locations[index].y]);
+      var feature = new Feature(geom);
+      feature.setStyle(styleForPoint);
+      dataSource.addFeature(feature);
+      ++index;
+    }
+
+    // window.setInterval(addRandomFeature, 3000);
+    locations.forEach(() => {
+      addRandomFeature();
+      // setTimeout(addRandomFeature, 1000);
     });
   }, []);
 
