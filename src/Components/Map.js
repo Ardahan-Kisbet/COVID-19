@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style, Text, Circle } from "ol/style";
+import { Stroke, Style, Circle } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
@@ -20,31 +20,13 @@ import { getVectorContext } from "ol/render";
 import { easeOut } from "ol/easing";
 import { unByKey } from "ol/Observable";
 
+import { styleForCountry, styleForPoint, styleForHighlight } from "./styles";
+
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
 var map = null;
 
 function SetMap() {
-  var style = new Style({
-    fill: new Fill({
-      color: "rgba(255, 255, 255, 0.6)",
-    }),
-    stroke: new Stroke({
-      color: "#319FD3",
-      width: 1,
-    }),
-    text: new Text({
-      font: "12px Calibri,sans-serif",
-      fill: new Fill({
-        color: "#000",
-      }),
-      stroke: new Stroke({
-        color: "#fff",
-        width: 3,
-      }),
-    }),
-  });
-
   var countryLayerSource = new VectorSource({
     url: CountryGeoJson,
     format: new GeoJSON(),
@@ -53,8 +35,8 @@ function SetMap() {
   var countryLayer = new VectorLayer({
     source: countryLayerSource,
     style: function (feature) {
-      style.getText().setText(feature.get("name"));
-      return style;
+      styleForCountry.getText().setText(feature.get("name"));
+      return styleForCountry;
     },
   });
 
@@ -64,13 +46,27 @@ function SetMap() {
     source: dataSource,
   });
 
+  // 38.9637° N, 35.2433° E TURKEY
+  var index = 0;
+  const locations = [
+    { x: 35.2433, y: 38.9637 },
+    { x: Math.random() * 360 - 180, y: Math.random() * 180 - 90 },
+    { x: Math.random() * 360 - 180, y: Math.random() * 180 - 90 },
+  ];
+
   function addRandomFeature() {
-    var x = Math.random() * 360 - 180;
-    var y = Math.random() * 180 - 90;
-    var geom = new Point(fromLonLat([x, y]));
+    var geom = new Point(fromLonLat([locations[index].x, locations[index].y]));
+    // var geom = new Point([locations[index].x, locations[index].y]);
     var feature = new Feature(geom);
+    feature.setStyle(styleForPoint);
     dataSource.addFeature(feature);
+    ++index;
   }
+
+  // window.setInterval(addRandomFeature, 3000);
+  locations.forEach(() => {
+    setTimeout(addRandomFeature, 1000);
+  });
 
   var duration = 3000;
   function flash(feature) {
@@ -87,7 +83,7 @@ function SetMap() {
       var radius = easeOut(elapsedRatio) * 25 + 5;
       var opacity = easeOut(1 - elapsedRatio);
 
-      var style = new Style({
+      var styleForFlash = new Style({
         image: new Circle({
           radius: radius,
           stroke: new Stroke({
@@ -97,7 +93,7 @@ function SetMap() {
         }),
       });
 
-      vectorContext.setStyle(style);
+      vectorContext.setStyle(styleForFlash);
       vectorContext.drawGeometry(flashGeom);
       if (elapsed > duration) {
         unByKey(listenerKey);
@@ -107,8 +103,6 @@ function SetMap() {
       map.render();
     }
   }
-
-  window.setInterval(addRandomFeature, 1000);
 
   dataSource.on("addfeature", function (e) {
     flash(e.feature);
@@ -131,28 +125,12 @@ function SetMap() {
     });
   }
 
-  var highlightStyle = new Style({
-    stroke: new Stroke({
-      color: "green",
-      width: 1,
-    }),
-    fill: new Fill({
-      color: "rgba(255,255,0,0.1)",
-    }),
-    text: new Text({
-      font: "12px Calibri,sans-serif",
-      fill: new Fill({
-        color: "green",
-      }),
-    }),
-  });
-
   var featureOverlay = new VectorLayer({
     source: new VectorSource(),
     map: map,
     style: function (feature) {
-      highlightStyle.getText().setText(feature.get("name"));
-      return highlightStyle;
+      styleForHighlight.getText().setText(feature.get("name"));
+      return styleForHighlight;
     },
   });
 

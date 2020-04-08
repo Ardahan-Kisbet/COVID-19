@@ -12,6 +12,7 @@ import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
 import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
 
 const initialValueCountByMonth = [{ id: 0, value: 0 }];
+const months = ["January", "February", "March", "April"];
 
 function App() {
   const [totalRepo, setTotalRepo] = useState(0);
@@ -41,13 +42,12 @@ function App() {
         <div className="d-flex flex-column w-100 h-100">
           <div>
             <div className="header-content d-flex justify-content-center">
-              <div className="title mb-5">
-                Newly Created Github Repos about COVID in 2020
-              </div>
+              <div className="title mb-5">COVID Disease Tracker by Country</div>
             </div>
             <div className="d-flex flex-column">
               <div className="total-repo-count">
-                Total number of COVID related repositories: {totalRepo}
+                Total number of COVID related repositories on Github:{" "}
+                {totalRepo}
               </div>
             </div>
           </div>
@@ -56,7 +56,9 @@ function App() {
           </div>
           <div className="d-flex flex-column flex-grow-1">
             {countByMonths.map((countByMonth, index) => (
-              <div key={countByMonth.id}>{countByMonth.value}</div>
+              <div key={countByMonth.id}>
+                Repo Counts on {months[index]}: {countByMonth.value}
+              </div>
             ))}
             <div id="location">Location: </div>
             <div id="info"></div>

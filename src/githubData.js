@@ -3,7 +3,7 @@ import axios from "axios";
 export const getTotalRepoCount = () => {
   return axios
     .get(
-      "https://api.github.com/search/repositories?q=covid in:name,description+created:>2020-01-01"
+      "https://api.github.com/search/repositories?q=covid OR coronavirus in:name,description+created:>2020-01-01"
     )
     .then((res) => {
       return res.data.total_count;
