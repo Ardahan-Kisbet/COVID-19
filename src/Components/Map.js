@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Stroke, Style, Circle, Fill } from "ol/style";
+import { Stroke, Style, Circle } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
@@ -20,7 +20,12 @@ import { getVectorContext } from "ol/render";
 import { easeOut } from "ol/easing";
 import { unByKey } from "ol/Observable";
 
-import { styleForCountry, styleForPoint, styleForHighlight } from "./styles";
+import {
+  styleForCountry,
+  styleForPoint,
+  styleForHighlight,
+  styleForDiseased,
+} from "./styles";
 
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
@@ -180,12 +185,13 @@ function MapObject() {
       source: new VectorSource(),
       map: map,
       style: function (feature) {
-        styleForHighlight.getText().setText(feature.get("name"));
-        return styleForHighlight;
+        // styleForDiseased.getText().setText(feature.get("name"));
+        return styleForDiseased;
       },
     });
 
     countryLayer.getSource().forEachFeature(function (feature) {
+      console.log(styleForDiseased);
       if (feature.get("name") === "Turkey") {
         activatedLayer.getSource().addFeature(feature);
       }

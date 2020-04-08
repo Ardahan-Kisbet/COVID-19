@@ -1,9 +1,9 @@
 import { Fill, Stroke, Style, Text, Circle } from "ol/style";
 
-var styleForCountry = new Style({
+const styleForCountry = new Style({
   fill: new Fill({
     // color: "rgba(255, 255, 255, 0.25)",
-    color: "rgba(255, 0, 0, 0.25)",
+    color: "rgba(255, 255, 255, 0.25)",
   }),
   stroke: new Stroke({
     // color: "#319FD3",
@@ -15,21 +15,17 @@ var styleForCountry = new Style({
     fill: new Fill({
       color: "green",
     }),
-    stroke: new Stroke({
-      color: "#fff",
-      width: 3,
-    }),
   }),
 });
 
-var styleForPoint = new Style({
+const styleForPoint = new Style({
   image: new Circle({
     radius: 10,
     fill: new Fill({ color: "rgba(255, 0, 0, 0.4)" }),
   }),
 });
 
-var styleForHighlight = new Style({
+const styleForHighlight = new Style({
   stroke: new Stroke({
     color: "green",
     width: 1,
@@ -45,4 +41,12 @@ var styleForHighlight = new Style({
   }),
 });
 
-export { styleForCountry, styleForPoint, styleForHighlight };
+const styleForDiseased = styleForCountry.clone();
+styleForDiseased.setFill(
+  new Fill({
+    // color: "rgba(255, 255, 255, 0.25)",
+    color: "rgba(0, 0, 0, 0.25)",
+  })
+);
+
+export { styleForCountry, styleForPoint, styleForHighlight, styleForDiseased };
