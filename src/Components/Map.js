@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -33,7 +33,7 @@ import Papa from "papaparse";
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
 var map = null;
-var coordinates = new Array();
+var coordinates = [];
 var countryLayerSource = new VectorSource({
   url: CountryGeoJson,
   format: new GeoJSON(),
@@ -50,6 +50,7 @@ var dataSource = new VectorSource({});
 var dataLayer = new VectorLayer({
   source: dataSource,
 });
+dataLayer.setZIndex(1);
 
 var tileLayer = new TileLayer({
   source: new OSM(),
@@ -117,6 +118,7 @@ function SetMap() {
       return styleForHighlight;
     },
   });
+  featureOverlay.setZIndex(0);
 
   var highlight;
   var displayFeatureInfo = function (pixel) {
