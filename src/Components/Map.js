@@ -68,7 +68,8 @@ function flash(feature) {
     var elapsed = frameState.time - start;
     var elapsedRatio = elapsed / duration;
     // radius will be 5 at start and 30 at end.
-    var radius = easeOut(elapsedRatio) * 25 + 5;
+    // var radius = easeOut(elapsedRatio) * 25 + 5;
+    var radius = easeOut(elapsedRatio) * 2 + 3;
     var opacity = easeOut(1 - elapsedRatio);
 
     var styleForFlash = new Style({

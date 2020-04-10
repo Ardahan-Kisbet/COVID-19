@@ -20,7 +20,7 @@ const styleForCountry = new Style({
 
 const styleForPoint = new Style({
   image: new Circle({
-    radius: 10,
+    radius: 3,
     fill: new Fill({ color: "rgba(255, 0, 0, 0.4)" }),
   }),
 });
