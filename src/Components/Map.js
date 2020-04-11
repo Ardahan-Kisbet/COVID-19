@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Stroke, Style, Circle } from "ol/style";
+import { Stroke, Style, Circle, Fill } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
@@ -25,6 +25,7 @@ import {
   styleForPoint,
   styleForHighlight,
   styleForDiseased,
+  initRadius,
 } from "./styles";
 
 import { GET_URL, latitudeIndex, longitudeIndex } from "../data";
@@ -155,6 +156,18 @@ function SetMap() {
 
   map.on("click", function (evt) {
     displayFeatureInfo(evt.pixel);
+  });
+
+  map.getView().on("change:resolution", function (evt) {
+    let zoom = map.getView().getZoom();
+    let newRadius = Math.pow(Math.abs(zoom - 2), 2) + initRadius;
+
+    // Update only radius of point/circle features
+    styleForPoint.getImage().setRadius(newRadius);
+
+    dataLayer.getSource().forEachFeature(function (feature) {
+      feature.setStyle(styleForPoint);
+    });
   });
 }
 

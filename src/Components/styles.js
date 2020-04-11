@@ -1,5 +1,7 @@
 import { Fill, Stroke, Style, Text, Circle } from "ol/style";
 
+const initRadius = 3;
+
 const styleForCountry = new Style({
   fill: new Fill({
     // color: "rgba(255, 255, 255, 0.25)",
@@ -20,7 +22,7 @@ const styleForCountry = new Style({
 
 const styleForPoint = new Style({
   image: new Circle({
-    radius: 3,
+    radius: initRadius,
     fill: new Fill({ color: "rgba(255, 0, 0, 0.4)" }),
   }),
 });
@@ -49,4 +51,10 @@ styleForDiseased.setFill(
   })
 );
 
-export { styleForCountry, styleForPoint, styleForHighlight, styleForDiseased };
+export {
+  styleForCountry,
+  styleForPoint,
+  styleForHighlight,
+  styleForDiseased,
+  initRadius,
+};
