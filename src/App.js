@@ -56,12 +56,20 @@ function App() {
             <Map></Map>
           </div>
           <div className="d-flex flex-column flex-grow-1">
-            {countByMonths.map((countByMonth, index) => (
-              <div key={countByMonth.id}>
-                Repo Counts on {months[index]}: {countByMonth.value}
+            <div className="h-75 bg-light">
+              <div>Area to display Chart</div>
+            </div>
+            <div className="h-25 bg-dark">
+              <div className="d-flex flex-row">
+                {countByMonths.map((countByMonth, index) => (
+                  <div key={countByMonth.id}>
+                    Repo Counts on {months[index]}: {countByMonth.value}
+                  </div>
+                ))}
               </div>
-            ))}
-            <div id="location">Location: </div>
+
+              <div id="location">Location: </div>
+            </div>
           </div>
           <div className="logo text-center h2 pb-3">
             <a
