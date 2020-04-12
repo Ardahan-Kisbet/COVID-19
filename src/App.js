@@ -4,6 +4,8 @@ import "./App.scss";
 
 // get map component
 import Map from "./Components/Map";
+// get chart component
+import Chart from "./Components/Chart";
 
 // get exported javascript functions
 import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
@@ -42,7 +44,7 @@ function App() {
         <div className="d-flex flex-column w-100 h-100">
           <div>
             <div className="header-content d-flex justify-content-center">
-              <div className="title mb-5">COVID Disease Tracker by Country</div>
+              <div className="title mb-2">COVID Disease Tracker by Country</div>
             </div>
             <div className="d-flex">
               <div className="total-repo-count">
@@ -56,10 +58,10 @@ function App() {
             <Map></Map>
           </div>
           <div className="d-flex flex-column flex-grow-1">
-            <div className="h-75 bg-light">
-              <div>Area to display Chart</div>
+            <div className="flex-grow-1">
+              <Chart></Chart>
             </div>
-            <div className="h-25 bg-dark">
+            <div className="">
               <div className="d-flex flex-row">
                 {countByMonths.map((countByMonth, index) => (
                   <div key={countByMonth.id}>
@@ -67,7 +69,6 @@ function App() {
                   </div>
                 ))}
               </div>
-
               <div id="location">Location: </div>
             </div>
           </div>

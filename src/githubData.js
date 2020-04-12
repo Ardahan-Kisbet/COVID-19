@@ -7,6 +7,9 @@ export const getTotalRepoCount = () => {
     )
     .then((res) => {
       return res.data.total_count;
+    })
+    .catch((err) => {
+      console.log("error on getTotalRepoCount: " + err);
     });
 };
 
