@@ -9,7 +9,7 @@ export const getTotalRepoCount = () => {
       return res.data.total_count;
     })
     .catch((err) => {
-      console.log("error on getTotalRepoCount: " + err);
+      return 0;
     });
 };
 
@@ -34,10 +34,9 @@ export const getRepoCounts = () => {
       axios.spread((...responses) => {
         return responses;
         // const res1 = responses[0];
-        // console.log("res1 ", res1);
       })
     )
     .catch((err) => {
-      console.log("error on axios.all --> " + err);
+      return 0;
     });
 };

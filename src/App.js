@@ -13,7 +13,12 @@ import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
 // import github icon
 import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
 
-const initialValueCountByMonth = [{ id: 0, value: 0 }];
+const initialValueCountByMonth = [
+  { id: 0, value: 0 },
+  { id: 1, value: 0 },
+  { id: 2, value: 0 },
+  { id: 3, value: 0 },
+];
 const months = ["January", "February", "March", "April"];
 
 function App() {
@@ -58,7 +63,7 @@ function App() {
             <Map></Map>
           </div>
           <Chart></Chart>
-          <div className="d-flex flex-row">
+          <div className="d-flex flex-row w-100 rounded-lg bg-dark justify-content-around">
             {countByMonths.map((countByMonth, index) => (
               <div key={countByMonth.id}>
                 Repo Counts on {months[index]}: {countByMonth.value}
