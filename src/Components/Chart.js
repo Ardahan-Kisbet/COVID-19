@@ -898,10 +898,8 @@ const data = [
 
 function Chart() {
   return (
-    <ResponsiveContainer>
+    <ResponsiveContainer width="100%" height={300}>
       <BarChart
-        width={500}
-        height={300}
         data={data}
         margin={{
           top: 5,

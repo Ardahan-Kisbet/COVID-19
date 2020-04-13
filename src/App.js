@@ -57,30 +57,26 @@ function App() {
           <div className="w-100 h-50">
             <Map></Map>
           </div>
-          <div className="d-flex flex-column flex-grow-1">
-            <div className="flex-grow-1">
-              <Chart></Chart>
-            </div>
-            <div className="">
-              <div className="d-flex flex-row">
-                {countByMonths.map((countByMonth, index) => (
-                  <div key={countByMonth.id}>
-                    Repo Counts on {months[index]}: {countByMonth.value}
-                  </div>
-                ))}
+          <Chart></Chart>
+          <div className="d-flex flex-row">
+            {countByMonths.map((countByMonth, index) => (
+              <div key={countByMonth.id}>
+                Repo Counts on {months[index]}: {countByMonth.value}
               </div>
-              <div id="location">Location: </div>
-            </div>
+            ))}
           </div>
-          <div className="logo text-center h2 pb-3">
-            <a
-              className="h-100"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://github.com/Ardahan-Kisbet/COVID-19"
-            >
-              <GithubLogo className="svg h-100"></GithubLogo>
-            </a>
+          <div className="d-flex flex-column">
+            <div id="location">Location: </div>
+            <div className="logo text-center h2 pb-3">
+              <a
+                className="h-100"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://github.com/Ardahan-Kisbet/COVID-19"
+              >
+                <GithubLogo className="svg h-100"></GithubLogo>
+              </a>
+            </div>
           </div>
         </div>
       </div>
