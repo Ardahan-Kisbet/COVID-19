@@ -20,58 +20,29 @@ const GET_URL = HEROKU_CORS_PROXY_URL + "/" + rawDataSource;
 
 const rawDataBackup = require("./assets/rawDataBackup.csv");
 
-// Plain way to deal with csv
-// Do not use this way. Use PAPAPARSE!
-
-// import axios from "axios";
-
-// Variable Definitions
-// var raw, countries, coordinates;
-
-// axios.get(GET_URL).then((res) => {
-//   raw = res.data.split("\n");
-//   raw.forEach(function (elem, i) {
-//     this[i] = elem.split(",");
-//   }, raw);
-
-//   // get rid of first line since it is header-column
-//   raw = raw.slice(1, raw.length);
-
-//   // seperate meaningful data
-//   seperateCountries();
-//   seperateCoordinates();
-//   // console.log(raw.filter((elem) => elem[countryIndex] === "Turkey"));
-// });
-
-// const seperateCountries = () => {
-//   countries = Array.from(raw, (r) => r[countryIndex]);
-//   // console.log(countries);
-// };
-
-// const seperateCoordinates = () => {
-//   coordinates = Array.from(raw, (r) => ({
-//     x: parseInt(r[longitudeIndex]) || 0,
-//     y: parseInt(r[latitudeIndex]) || 0,
-//   }));
-//   // console.log(coordinates);
-// };
-
-// const getCoordinates = () => {
-//   return coordinates;
-// };
-
-// export { getCoordinates };
-
+/**
+ * raw data variable will be used to prevent repetitive request to
+ * original github repository. Fetch it once and use it!
+ */
 let rawData = null;
+
+/**
+ * This function is used for preparing raw data either from original
+ * CSSEGISandData github repository or local backup file rawDataBackup.csv
+ * All possible conditions are handled in this function to prevent application crashes.
+ */
 const GetRawData = () => {
   return new Promise((resolve) => {
     if (rawData === null) {
+      // If rawData is null then we haven't request to original data yet.
+      // proceed with data request
       Papa.parse(GET_URL, {
         header: false,
         skipEmptyLines: true,
         download: true,
         dynamicTyping: true, //ensures that numbers not turned to strings
         complete: (res) => {
+          // Fetch at once. Store it to rawData to use it later!
           rawData = res;
           resolve(rawData);
         },
@@ -84,13 +55,13 @@ const GetRawData = () => {
             download: true,
             dynamicTyping: true, //ensures that numbers not turned to strings
             complete: (res) => {
+              // Backup data successfully loaded. Store it to rawData to use it later!
               rawData = res;
               resolve(rawData);
             },
             error: (err) => {
-              // this block of code should not be executed at all
-              // if backup data is not corrupted
-              // Defensive
+              // this block of code should not be executed at all if backup
+              // data is not corrupted - Defensive
               rawData = null;
               resolve(rawData);
             },
@@ -98,11 +69,17 @@ const GetRawData = () => {
         },
       });
     } else {
+      // If rawData is not null then we already have got our data, return it.
       resolve(rawData);
     }
   });
 };
 
+/**
+ * This function is used for getting all the coordinates from raw data which is
+ * fetched by using GetRawData().
+ * This is exported from module to use in components such as Map component
+ */
 const GetCoordinateData = async function () {
   return new Promise((resolve) => {
     GetRawData().then((raw) => {
