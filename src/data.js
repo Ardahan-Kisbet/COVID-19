@@ -18,6 +18,8 @@ const rawDataSource =
 
 const GET_URL = HEROKU_CORS_PROXY_URL + "/" + rawDataSource;
 
+const rawDataBackup = require("./assets/rawDataBackup.csv");
+
 // Plain way to deal with csv
 // Do not use this way. Use PAPAPARSE!
 
@@ -70,13 +72,29 @@ const GetRawData = () => {
         download: true,
         dynamicTyping: true, //ensures that numbers not turned to strings
         complete: (res) => {
-          resolve(res);
+          rawData = res;
+          resolve(rawData);
         },
         error: (err) => {
-          // If we can not fetch live data from given url try to load backup data from assets
-          // TODO
-          rawData = null;
-          resolve(rawData);
+          // If we can not fetch live data from given url try to load
+          // backup data from assets/rawDataBackup.csv
+          Papa.parse(rawDataBackup, {
+            header: false,
+            skipEmptyLines: true,
+            download: true,
+            dynamicTyping: true, //ensures that numbers not turned to strings
+            complete: (res) => {
+              rawData = res;
+              resolve(rawData);
+            },
+            error: (err) => {
+              // this block of code should not be executed at all
+              // if backup data is not corrupted
+              // Defensive
+              rawData = null;
+              resolve(rawData);
+            },
+          });
         },
       });
     } else {
