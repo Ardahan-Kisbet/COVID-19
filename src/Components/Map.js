@@ -28,8 +28,7 @@ import {
   initRadius,
 } from "./styles";
 
-import { GET_URL, latitudeIndex, longitudeIndex } from "../data";
-import Papa from "papaparse";
+import { GetCoordinateData } from "../data";
 
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
@@ -203,36 +202,26 @@ function AddCoordinateFeatures(x, y) {
 function MapObject() {
   // to run function only once give [] as second parameter
 
-  useEffect(() => {
-    Papa.parse(GET_URL, {
-      header: false,
-      skipEmptyLines: true,
-      download: true,
-      dynamicTyping: true, //ensures that numbers not turned to strings
-      step: function (row) {
-        coordinates.push({
-          x: row.data[longitudeIndex] || 0,
-          y: row.data[latitudeIndex] || 0,
-        });
-      },
-      complete: function (results) {
-        // SOME DATA CLEAN-UP
-        // get rid of first line since it is header-column
-        coordinates = coordinates.slice(1, coordinates.length);
+  async function FetchData() {
+    // Wait for response
+    await GetCoordinateData()
+      .then((res) => {
+        coordinates = res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-        // filter empty coordinates
-        coordinates = coordinates.filter((elem) => {
-          return elem.x !== 0 && elem.y !== 0;
-        });
-
-        // console.log(coordinates);
-        SetMap();
-        SetDiseasedCountries();
-        coordinates.forEach((elem) => {
-          AddCoordinateFeatures(elem.x, elem.y);
-        });
-      },
+    // now coordinates are ready - set map data
+    SetMap();
+    SetDiseasedCountries();
+    coordinates.forEach((elem) => {
+      AddCoordinateFeatures(elem.x, elem.y);
     });
+  }
+
+  useEffect(() => {
+    FetchData();
   }, []);
 
   return <div id="map" className="h-100"></div>;
