@@ -46,7 +46,7 @@ const styleForHighlight = new Style({
 const styleForDiseased = styleForCountry.clone();
 styleForDiseased.setFill(
   new Fill({
-    // color: "rgba(255, 255, 255, 0.25)",
+    // color: "rgba(255, 255, 255, 0.75)",
     color: "rgba(0, 0, 0, 0.25)",
   })
 );

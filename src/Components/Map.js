@@ -28,7 +28,7 @@ import {
   initRadius,
 } from "./styles";
 
-import { GetCoordinateData } from "../data";
+import { GetCountryStateData } from "../data";
 
 // This should be defined out of SetMap function. Otherwise every time component renders, it will create mapObj again and a new map will be created too.
 // So define it in here and handle null check before map creation.
@@ -39,6 +39,7 @@ var countryLayerSource = new VectorSource({
   format: new GeoJSON(),
 });
 var countryLayer = new VectorLayer({
+  name: "country",
   source: countryLayerSource,
   style: function (feature) {
     styleForCountry.getText().setText(feature.get("name"));
@@ -48,12 +49,22 @@ var countryLayer = new VectorLayer({
 var dataSource = new VectorSource({});
 
 var dataLayer = new VectorLayer({
+  name: "data",
   source: dataSource,
+  zIndex: 1, // this is important to reach out circles on country layer
 });
-dataLayer.setZIndex(1);
 
 var tileLayer = new TileLayer({
   source: new OSM(),
+});
+
+var diseasedCountryLayerSource = new VectorSource({});
+var diseasedCountryLayer = new VectorLayer({
+  name: "diseased",
+  source: diseasedCountryLayerSource,
+  style: function (feature) {
+    return styleForDiseased;
+  },
 });
 
 var duration = 3000;
@@ -101,7 +112,7 @@ function SetMap() {
   if (map === null) {
     map = new Map({
       target: "map",
-      layers: [tileLayer, countryLayer, dataLayer],
+      layers: [tileLayer, countryLayer, diseasedCountryLayer, dataLayer],
       view: new View({
         center: [0, 0],
         zoom: 0,
@@ -111,38 +122,68 @@ function SetMap() {
     });
   }
 
-  var featureOverlay = new VectorLayer({
+  var featureOverlayCountry = new VectorLayer({
     source: new VectorSource(),
     map: map,
     style: function (feature) {
       styleForHighlight.getText().setText(feature.get("name"));
       return styleForHighlight;
     },
+    zIndex: 0,
   });
-  featureOverlay.setZIndex(0);
 
-  var highlight;
+  var featureOverlayData = new VectorLayer({
+    source: new VectorSource(),
+    map: map,
+    style: function (feature) {
+      return styleForPoint;
+    },
+    zIndex: 1,
+  });
+
+  var highlightCountry;
+  var highlightData;
   var displayFeatureInfo = function (pixel) {
-    var feature = map.forEachFeatureAtPixel(pixel, function (feature) {
-      return feature;
-    });
-
     var info = document.getElementById("info");
-    if (feature) {
-      info.innerHTML = feature.getId() + ": " + feature.get("name");
-    } else {
-      info.innerHTML = "&nbsp;";
-    }
 
-    if (feature !== highlight) {
-      if (highlight) {
-        featureOverlay.getSource().removeFeature(highlight);
+    map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+      if (layer) {
+        // handle country layer and data layer seperately
+        switch (layer.get("name")) {
+          case "country":
+            if (feature) {
+              info.innerHTML = feature.getId() + ": " + feature.get("name");
+            } else {
+              info.innerHTML = "&nbsp;";
+            }
+            if (feature !== highlightCountry) {
+              if (highlightCountry) {
+                featureOverlayCountry
+                  .getSource()
+                  .removeFeature(highlightCountry);
+              }
+              if (feature) {
+                featureOverlayCountry.getSource().addFeature(feature);
+              }
+              highlightCountry = feature;
+            }
+            break;
+          case "data":
+            if (feature !== highlightData) {
+              if (highlightData) {
+                featureOverlayData.getSource().removeFeature(highlightData);
+              }
+              if (feature) {
+                featureOverlayData.getSource().addFeature(feature);
+              }
+              highlightData = feature;
+            }
+            break;
+          default:
+            console.log(2);
+        }
       }
-      if (feature) {
-        featureOverlay.getSource().addFeature(feature);
-      }
-      highlight = feature;
-    }
+    });
   };
 
   map.on("pointermove", function (evt) {
@@ -172,28 +213,15 @@ function SetMap() {
 
 function SetDiseasedCountries() {
   // Change color of diseased countries
-  var activatedLayer = new VectorLayer({
-    source: new VectorSource(),
-    map: map,
-    style: function (feature) {
-      return styleForDiseased;
-    },
-  });
-
-  countryLayer.getSource().forEachFeature(function (feature) {
-    if (feature.get("name") === "Turkey") {
-      activatedLayer.getSource().addFeature(feature);
-    }
-
-    if (feature.get("name") === "Russia") {
-      activatedLayer.getSource().addFeature(feature);
-    }
-  });
+  // TODO
+  // countryLayerSource.forEachFeature((feature) => {
+  //   console.log(1);
+  // });
 }
 
-function AddCoordinateFeatures(x, y) {
+function AddCoordinateFeatures(elem) {
   // var geom = new Point(fromLonLat([coordinates[index].x, locations[index].y]));
-  var geom = new Point(fromLonLat([x, y]));
+  var geom = new Point(fromLonLat([elem.x, elem.y]));
   var feature = new Feature(geom);
   feature.setStyle(styleForPoint);
   dataSource.addFeature(feature);
@@ -204,7 +232,7 @@ function MapObject() {
 
   async function FetchData() {
     // Wait for response
-    await GetCoordinateData()
+    await GetCountryStateData()
       .then((res) => {
         coordinates = res;
       })
@@ -216,7 +244,7 @@ function MapObject() {
     SetMap();
     SetDiseasedCountries();
     coordinates.forEach((elem) => {
-      AddCoordinateFeatures(elem.x, elem.y);
+      AddCoordinateFeatures(elem);
     });
   }
 

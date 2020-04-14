@@ -9,6 +9,7 @@ const stateIndex = 0;
 const countryIndex = 1;
 const latitudeIndex = 2;
 const longitudeIndex = 3;
+const dataStartIndex = 4;
 // 4, 5, 6 ... and so on --> result day by day start from 1/22/2020
 
 // TO prevent cors issue use public heroku proxy
@@ -77,24 +78,33 @@ const GetRawData = () => {
 
 /**
  * This function is used for getting all the coordinates from raw data which is
- * fetched by using GetRawData().
- * This is exported from module to use in components such as Map component
+ * fetched by using GetRawData() alongside total case count and seperated
+ * country/state knowledge.
+ * This method is exported to use in components such as Map and Chart component
  */
-const GetCoordinateData = async function () {
+const GetCountryStateData = async function () {
   return new Promise((resolve) => {
     GetRawData().then((raw) => {
+      // SOME DATA CLEAN-UP
+      // get rid of first line since it is header-column
+      raw.data = raw.data.slice(1, raw.data.length);
+
       let coordinates = [];
-      // get only coordinates
       raw.data.forEach((row) => {
+        let totalCol = row.length;
+        let count = 0;
+        for (let i = dataStartIndex; i < totalCol; ++i) {
+          count += row[i];
+        }
+
         coordinates.push({
+          countryName: row[countryIndex] || "Undefined",
+          stateName: row[stateIndex] || null,
+          totalCase: count,
           x: row[longitudeIndex] || 0,
           y: row[latitudeIndex] || 0,
         });
       });
-
-      // SOME DATA CLEAN-UP
-      // get rid of first line since it is header-column
-      coordinates = coordinates.slice(1, coordinates.length);
 
       // filter empty coordinates
       coordinates = coordinates.filter((elem) => {
@@ -106,4 +116,36 @@ const GetCoordinateData = async function () {
   });
 };
 
-export { GetCoordinateData };
+const GetTotalCase = async function () {
+  return new Promise((resolve) => {
+    GetRawData().then((raw) => {
+      // SOME DATA CLEAN-UP
+      // get rid of first line since it is header-column
+      raw.data = raw.data.slice(1, raw.data.length);
+
+      let totalCase = [];
+      raw.data.forEach((row) => {
+        let totalCol = row.length;
+        let count = 0;
+        for (let i = dataStartIndex; i < totalCol; ++i) {
+          count += row[i];
+        }
+
+        // now we have total disease count for iterated country
+        totalCase.push({
+          countryName: row[countryIndex] || "Undefined",
+          totalCase: count,
+        });
+
+        // move on with next country
+      });
+
+      // console.log(totalCase);
+      resolve(totalCase);
+    });
+  });
+};
+
+GetTotalCase();
+
+export { GetCountryStateData, GetTotalCase };
