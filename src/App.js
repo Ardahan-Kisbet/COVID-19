@@ -5,7 +5,7 @@ import "./App.scss";
 // get map component
 import Map from "./Components/Map";
 // get chart component
-import Chart from "./Components/Chart";
+import ChartCanvas from "./Components/Chart";
 
 // get exported javascript functions
 import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
@@ -62,15 +62,15 @@ function App() {
           <div className="w-100 h-50">
             <Map></Map>
           </div>
-          <Chart></Chart>
-          <div className="d-flex flex-row w-100 rounded-lg bg-dark justify-content-around">
+          <div className="w-100 h-25 bg-light">
+            <ChartCanvas></ChartCanvas>
+          </div>
+          <div className="d-flex flex-column">
             {countByMonths.map((countByMonth, index) => (
               <div key={countByMonth.id}>
                 Repo Counts on {months[index]}: {countByMonth.value}
               </div>
             ))}
-          </div>
-          <div className="d-flex flex-column">
             <div id="location">Location: </div>
             <div className="logo text-center h2 pb-3">
               <a
