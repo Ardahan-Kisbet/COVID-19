@@ -85,22 +85,49 @@ const GetRawData = () => {
 const GetCountryStateData = async function () {
   return new Promise((resolve) => {
     GetRawData().then((raw) => {
-      // SOME DATA CLEAN-UP
+      let months = [];
+      let totalCol = raw.data[0].length;
+      for (let i = dataStartIndex; i < totalCol; ++i) {
+        let currMonth = new Date(raw.data[0][i]).getMonth();
+        let isExist = months.findIndex((x) => x.month === currMonth);
+        if (isExist === -1) {
+          // if we encounter with new month then add it to month array
+          // by giving day count as 1
+          months.push({ month: currMonth, daysCount: 1 });
+        } else {
+          // if already exist in month array just increase day count by 1
+          months[isExist].daysCount++;
+        }
+      }
+      // now we have our month/day array as ready to be used disease counting
+
       // get rid of first line since it is header-column
       raw.data = raw.data.slice(1, raw.data.length);
 
       let coordinates = [];
       raw.data.forEach((row) => {
-        let totalCol = row.length;
-        let count = 0;
-        for (let i = dataStartIndex; i < totalCol; ++i) {
-          count += row[i];
-        }
+        let caseByMonth = [];
+        let i = dataStartIndex;
+        months.forEach((m) => {
+          let count = 0;
+          for (let j = i; j < i + m.daysCount; ++j) {
+            count += row[j];
+          }
+
+          // now we have our monthly disease count here
+          caseByMonth.push({ month: m.month, days: m.daysCount, count: count });
+
+          // set next iteration index which will be used in for loop j element
+          i += m.daysCount;
+        });
+
+        let totalCase = caseByMonth.reduce((sum, elem) => sum + elem.count, 0);
 
         coordinates.push({
           countryName: row[countryIndex] || "Undefined",
           stateName: row[stateIndex] || null,
-          totalCase: count,
+          totalCase: totalCase,
+          detailedCase: caseByMonth,
           x: row[longitudeIndex] || 0,
           y: row[latitudeIndex] || 0,
         });
@@ -111,41 +138,10 @@ const GetCountryStateData = async function () {
         return elem.x !== 0 && elem.y !== 0;
       });
 
+      console.log(coordinates);
       resolve(coordinates);
     });
   });
 };
 
-const GetTotalCase = async function () {
-  return new Promise((resolve) => {
-    GetRawData().then((raw) => {
-      // SOME DATA CLEAN-UP
-      // get rid of first line since it is header-column
-      raw.data = raw.data.slice(1, raw.data.length);
-
-      let totalCase = [];
-      raw.data.forEach((row) => {
-        let totalCol = row.length;
-        let count = 0;
-        for (let i = dataStartIndex; i < totalCol; ++i) {
-          count += row[i];
-        }
-
-        // now we have total disease count for iterated country
-        totalCase.push({
-          countryName: row[countryIndex] || "Undefined",
-          totalCase: count,
-        });
-
-        // move on with next country
-      });
-
-      // console.log(totalCase);
-      resolve(totalCase);
-    });
-  });
-};
-
-GetTotalCase();
-
-export { GetCountryStateData, GetTotalCase };
+export { GetCountryStateData };
