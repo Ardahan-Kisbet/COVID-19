@@ -110,9 +110,11 @@ const GetCountryStateData = async function () {
         let i = dataStartIndex;
         months.forEach((m) => {
           let count = 0;
-          for (let j = i; j < i + m.daysCount; ++j) {
-            count += row[j];
-          }
+          // for (let j = i; j < i + m.daysCount; ++j) {
+          //   count += row[j];
+          // }
+          // this is the total case count at the end of the each month
+          count = row[i + m.daysCount - 1];
 
           // now we have our monthly disease count here
           caseByMonth.push({ month: m.month, days: m.daysCount, count: count });
@@ -138,6 +140,7 @@ const GetCountryStateData = async function () {
         return elem.x !== 0 && elem.y !== 0;
       });
 
+      console.log(coordinates);
       resolve(coordinates);
     });
   });

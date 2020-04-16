@@ -66,7 +66,7 @@ function App() {
             <ChartCanvas></ChartCanvas>
           </div>
           <div className="d-flex flex-column">
-            <div className="d-flex bg-dark justify-content-around">
+            <div className="bg-dark">
               {countByMonths.map((countByMonth, index) => (
                 <div key={countByMonth.id}>
                   Repo Counts on {months[index]}: {countByMonth.value}
