@@ -47,26 +47,24 @@ function App() {
     <div className="content">
       <div className="col-xl-8 col-lg-10 col-md-12 col-sm-12 h-100">
         <div className="d-flex flex-column w-100 h-100">
-          <div>
-            <div className="header-content d-flex justify-content-center">
-              <div className="title mb-2">COVID Disease Tracker by Country</div>
-            </div>
-            <div className="d-flex">
-              <div className="total-repo-count">
-                Total number of COVID related repositories on Github:{" "}
-                {totalRepo}
-              </div>
-              <div className="ml-auto" id="info"></div>
-            </div>
+          <div className="header-content d-flex justify-content-center">
+            <div className="title mb-2">COVID Disease Tracker by Country</div>
           </div>
-          <div className="w-100 h-50">
+          <div className="d-flex">
+            <div className="ml-auto" id="info"></div>
+          </div>
+          <div className="w-100 h-50 mb-3">
             <Map></Map>
           </div>
-          <div className="w-100 h-25 bg-light">
+          <div className="w-100 h-25 bg-light mb-3">
             <ChartCanvas></ChartCanvas>
           </div>
           <div className="d-flex flex-column">
             <div className="bg-dark">
+              <div className="total-repo-count">
+                Total number of COVID related repositories on Github:{" "}
+                {totalRepo}
+              </div>
               {countByMonths.map((countByMonth, index) => (
                 <div key={countByMonth.id}>
                   Repo Counts on {months[index]}: {countByMonth.value}
