@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // get exported javascript functions
-import { getTotalRepoCount, getRepoCounts } from "./githubData.js";
+import { getTotalRepoCount, getRepoCounts } from "../githubData";
 
 const initialValueCountByMonth = [
   { id: 0, value: 0 },
