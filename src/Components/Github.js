@@ -37,11 +37,17 @@ function Github() {
       <div className="total-repo-count">
         Total number of COVID related repositories on Github: {totalRepo}
       </div>
-      {countByMonths.map((countByMonth, index) => (
-        <div key={countByMonth.id}>
-          Repo Counts on {months[index]}: {countByMonth.value}
-        </div>
-      ))}
+      <table class="table table-dark table-hover">
+        <tbody>
+          {countByMonths.map((countByMonth, index) => (
+            <tr>
+              <td>Repo Counts on {months[index]}</td>
+              <td>{countByMonth.value}</td>
+              {/* <div key={countByMonth.id}> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
