@@ -14,20 +14,25 @@ function App() {
     <div className="content">
       <div className="col-xl-8 col-lg-10 col-md-12 col-sm-12 h-100">
         <div className="d-flex flex-column w-100 h-100">
-          <div className="header-content d-flex justify-content-center">
-            <div className="title mb-2">COVID Disease Tracker by Country</div>
-          </div>
-          <div className="d-flex">
+          <div className="d-flex flex-column">
+            <div className="title text-center">
+              COVID Disease Tracker by Country
+            </div>
             <div className="ml-auto" id="info"></div>
           </div>
-          <div className="w-100 h-50 mb-1">
-            <Map></Map>
+          <div className="h-75">
+            <div className="h-50 mb-1">
+              <Map></Map>
+            </div>
+            <div className="h-25 bg-light mb">
+              <ChartCanvas></ChartCanvas>
+            </div>
+            <div className="h-25">
+              <Github></Github>
+            </div>
           </div>
-          <div className="w-100 h-25 bg-light mb-1">
-            <ChartCanvas></ChartCanvas>
-          </div>
-          <div className="d-flex flex-column">
-            <Github></Github>
+
+          <div className="d-flex flex-column mt-2">
             <div id="location">Location: </div>
             <div className="logo text-center h2 pb-3">
               <a

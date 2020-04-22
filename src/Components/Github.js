@@ -76,8 +76,8 @@ function Github() {
   }, []);
 
   return (
-    <div className="bg-dark overflow-auto" style={{ height: "200px" }}>
-      <table className="table table-dark table-hover">
+    <div className="overflow-auto">
+      <table className="table table-secondary table-hover">
         <tbody>
           <tr>
             <td>Total number of COVID related repositories on Github</td>
