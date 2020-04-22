@@ -20,10 +20,10 @@ function App() {
           <div className="d-flex">
             <div className="ml-auto" id="info"></div>
           </div>
-          <div className="w-100 h-50 mb-3">
+          <div className="w-100 h-50 mb-1">
             <Map></Map>
           </div>
-          <div className="w-100 h-25 bg-light mb-3">
+          <div className="w-100 h-25 bg-light mb-1">
             <ChartCanvas></ChartCanvas>
           </div>
           <div className="d-flex flex-column">

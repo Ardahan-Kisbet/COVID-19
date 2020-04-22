@@ -140,7 +140,6 @@ const GetCountryStateData = async function () {
         return elem.x !== 0 && elem.y !== 0;
       });
 
-      console.log(coordinates);
       resolve(coordinates);
     });
   });
