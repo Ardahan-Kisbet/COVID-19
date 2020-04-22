@@ -20,13 +20,11 @@ function App() {
             </div>
             <div className="ml-auto" id="info"></div>
           </div>
-          <div className="h-75">
-            <div className="h-75 mb-1">
-              <Map></Map>
-            </div>
-            <div className="h-25 bg-light mb">
-              <ChartCanvas></ChartCanvas>
-            </div>
+          <div className="h-50 mb-1">
+            <Map></Map>
+          </div>
+          <div className="h-50 bg-light mb">
+            <ChartCanvas></ChartCanvas>
           </div>
           <div className="h-25">
             <Github></Github>
