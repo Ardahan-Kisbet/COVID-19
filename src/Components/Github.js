@@ -76,24 +76,22 @@ function Github() {
   }, []);
 
   return (
-    <div className="overflow-auto">
-      <table className="table table-secondary table-hover">
-        <tbody>
-          <tr>
-            <td>Total number of COVID related repositories on Github</td>
-            <td>{totalRepo}</td>
-          </tr>
-          {countByMonths &&
-            countByMonths.map((countByMonth, index) => (
-              <tr key={index}>
-                <td>Repo Counts on {months[index]}</td>
-                <td>{countByMonth.value}</td>
-                {/* <div key={countByMonth.id}> */}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
+    <table className="table table-secondary table-hover">
+      <tbody>
+        <tr>
+          <td>Total number of COVID related repositories on Github</td>
+          <td>{totalRepo}</td>
+        </tr>
+        {countByMonths &&
+          countByMonths.map((countByMonth, index) => (
+            <tr key={index}>
+              <td>Repo Counts on {months[index]}</td>
+              <td>{countByMonth.value}</td>
+              {/* <div key={countByMonth.id}> */}
+            </tr>
+          ))}
+      </tbody>
+    </table>
   );
 }
 

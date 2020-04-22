@@ -20,17 +20,21 @@ function App() {
             </div>
             <div className="ml-auto" id="info"></div>
           </div>
-          <div className="h-50 mb-1">
+          <div className="mb-1" style={{ height: "400px" }}>
             <Map></Map>
           </div>
-          <div className="h-50 bg-light mb">
+          <div className="bg-light" style={{ height: "250px" }}>
             <ChartCanvas></ChartCanvas>
           </div>
-          <div className="h-25">
+          <div className="mt-1">
             <Github></Github>
           </div>
           <div className="d-flex flex-column mt-auto">
             <div id="location">Location: </div>
+            <hr
+              className="w-100"
+              style={{ border: "1px solid white", borderRadius: "5px" }}
+            ></hr>
             <div className="logo text-center h2 pb-3">
               <a
                 className="h-100"
