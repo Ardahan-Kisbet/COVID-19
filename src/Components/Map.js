@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Stroke, Style, Circle, Fill } from "ol/style";
+import { Stroke, Style, Circle } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
@@ -19,6 +19,7 @@ import CountryGeoJson from "../assets/countries.geojson";
 import { getVectorContext } from "ol/render";
 import { easeOut } from "ol/easing";
 import { unByKey } from "ol/Observable";
+import Overlay from "ol/Overlay";
 
 import {
   styleForCountry,
@@ -57,6 +58,9 @@ var dataLayer = new VectorLayer({
 var tileLayer = new TileLayer({
   source: new OSM(),
 });
+
+var tooltip = null;
+var tooltipOverlay = null;
 
 var diseasedCountryLayerSource = new VectorSource({});
 var diseasedCountryLayer = new VectorLayer({
@@ -120,6 +124,14 @@ function SetMap() {
       }),
       interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
     });
+
+    tooltip = document.getElementById("tooltip");
+    tooltipOverlay = new Overlay({
+      element: tooltip,
+      offset: [10, 0],
+      positioning: "bottom-left",
+    });
+    map.addOverlay(tooltipOverlay);
   }
 
   var featureOverlayCountry = new VectorLayer({
@@ -178,12 +190,34 @@ function SetMap() {
               }
               highlightData = feature;
             }
+
             break;
           default:
-            console.log(2);
         }
       }
     });
+  };
+
+  // tooltip operations
+  const displayTooltip = (evt) => {
+    let circleExist = false;
+    map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+      if (layer) {
+        if (layer.get("name") === "data") {
+          if (feature) {
+            tooltip.style.display = "";
+            tooltipOverlay.setPosition(evt.coordinate);
+            tooltip.innerHTML = "Some Information Here..";
+            circleExist = true;
+          }
+        }
+      }
+    });
+
+    if (!circleExist) {
+      // then there is no circle in this coordinate close tooltip
+      tooltip.style.display = "none";
+    }
   };
 
   map.on("pointermove", function (evt) {
@@ -196,6 +230,7 @@ function SetMap() {
 
   map.on("click", function (evt) {
     displayFeatureInfo(evt.pixel);
+    displayTooltip(evt);
   });
 
   map.getView().on("change:resolution", function (evt) {
@@ -252,7 +287,11 @@ function MapObject() {
     FetchData();
   }, []);
 
-  return <div id="map" className="h-100"></div>;
+  return (
+    <div id="map" className="h-100">
+      <div id="tooltip" className="customTooltip"></div>
+    </div>
+  );
 }
 
 export default MapObject;

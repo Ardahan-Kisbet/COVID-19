@@ -43,3 +43,13 @@ body {
 .logo {
   height: 50px;
 }
+
+.customTooltip {
+  position: relative;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  opacity: 0.7;
+  white-space: nowrap;
+  font: 10pt sans-serif;
+}
