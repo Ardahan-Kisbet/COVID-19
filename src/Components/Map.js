@@ -207,7 +207,7 @@ function SetMap() {
           if (feature) {
             tooltip.style.display = "";
             tooltipOverlay.setPosition(evt.coordinate);
-            tooltip.innerHTML = "Some Information Here..";
+            tooltip.innerHTML = `Total Disease: ${feature.get("totalCase")}`;
             circleExist = true;
           }
         }
@@ -258,6 +258,7 @@ function AddCoordinateFeatures(elem) {
   // var geom = new Point(fromLonLat([coordinates[index].x, locations[index].y]));
   var geom = new Point(fromLonLat([elem.x, elem.y]));
   var feature = new Feature(geom);
+  feature.setProperties(elem);
   feature.setStyle(styleForPoint);
   dataSource.addFeature(feature);
 }
