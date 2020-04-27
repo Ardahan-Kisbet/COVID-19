@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Chart from "chart.js";
 import { GetCountryStateData } from "../data";
+import { act } from "react-dom/test-utils";
 
 var ctx = null;
 
@@ -48,7 +49,7 @@ async function FetchData() {
           labels: labels,
           datasets: [
             {
-              label: active.countryName,
+              label: "Count",
               backgroundColor: "rgb(255, 99, 132)",
               borderColor: "rgb(255, 99, 132)",
               data: data,
@@ -58,6 +59,10 @@ async function FetchData() {
 
         // Configuration options go here
         options: {
+          title: {
+            display: true,
+            text: `Monthly Disease Count of ${active.countryName}`,
+          },
           responsive: true,
           maintainAspectRatio: false,
         },
