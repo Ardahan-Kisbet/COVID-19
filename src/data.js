@@ -108,21 +108,26 @@ const GetCountryStateData = async function () {
       raw.data.forEach((row) => {
         let caseByMonth = [];
         let i = dataStartIndex;
+        let prevCount = 0;
         months.forEach((m) => {
           let count = 0;
-          // for (let j = i; j < i + m.daysCount; ++j) {
-          //   count += row[j];
-          // }
+
           // this is the total case count at the end of the each month
           count = row[i + m.daysCount - 1];
 
           // now we have our monthly disease count here
-          caseByMonth.push({ month: m.month, days: m.daysCount, count: count });
+          caseByMonth.push({
+            month: m.month,
+            days: m.daysCount,
+            count: count - prevCount,
+          });
+          prevCount = count;
 
           // set next iteration index which will be used in for loop j element
           i += m.daysCount;
         });
 
+        // sum all individual monthly data to find total count at the end
         let totalCase = caseByMonth.reduce((sum, elem) => sum + elem.count, 0);
 
         coordinates.push({

@@ -50,7 +50,8 @@ async function FetchData() {
           datasets: [
             {
               label: "Count",
-              backgroundColor: "rgb(255, 99, 132)",
+              // backgroundColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgb(255, 255, 255, 0)",
               borderColor: "rgb(255, 99, 132)",
               data: data,
             },
