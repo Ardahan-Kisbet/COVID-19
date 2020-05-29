@@ -1,5 +1,7 @@
 COVID Disease Tracker by Country
 
+[Live](https://ardahan-kisbet.github.io/COVID-19/)
+
 Serverless single page application created by create-react-app.
 
 Track on Map
