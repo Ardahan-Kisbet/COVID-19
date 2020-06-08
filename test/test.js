@@ -1,8 +1,7 @@
 var common = require("./common");
 
-it("blah a", function () {
-  // console.log("test");
-  common.assert.isTrue(false);
+beforeEach(() => {
+  console.log("test");
 });
 
 describe("Array", function () {
