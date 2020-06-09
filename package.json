@@ -9,9 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
-    "chai": "^4.2.0",
     "chart.js": "^2.9.3",
-    "mocha": "^7.2.0",
     "node-sass": "^4.13.1",
     "ol": "^6.2.1",
     "papaparse": "^5.2.0",
@@ -24,7 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "mocha",
+    "test": "SET NODE_ENV=test&& mocha --require @babel/register --require ignore-styles src/test/*.test.js",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
@@ -45,6 +43,17 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "@babel/plugin-transform-modules-commonjs": "^7.10.1",
+    "@babel/register": "^7.10.1",
+    "babel-plugin-inline-react-svg": "^1.1.1",
+    "babel-preset-react-app-babel-7": "^4.0.2-0",
+    "chai": "^4.2.0",
+    "chai-enzyme": "^1.0.0-beta.1",
+    "cheerio": "^1.0.0-rc.3",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "gh-pages": "^2.2.0",
+    "ignore-styles": "^5.0.1",
+    "mocha": "^6.2.3"
   }
 }
