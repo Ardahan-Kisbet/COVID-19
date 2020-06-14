@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.scss";
 // get map component
 import Map from "./Components/Map";
@@ -10,6 +10,7 @@ import Github from "./Components/Github";
 import { ReactComponent as GithubLogo } from "./assets/github-brands.svg";
 
 function App() {
+  const [countryName, setCountryName] = useState("Turkey");
   return (
     <div className="content">
       <div className="col-xl-8 col-lg-10 col-md-12 col-sm-12 h-100">
@@ -21,10 +22,10 @@ function App() {
             <div className="ml-auto" id="info"></div>
           </div>
           <div className="mb-1" style={{ height: "400px" }}>
-            <Map></Map>
+            <Map SetCountryName={setCountryName}></Map>
           </div>
           <div className="bg-light" style={{ height: "250px" }}>
-            <ChartCanvas></ChartCanvas>
+            <ChartCanvas CountryName={countryName}></ChartCanvas>
           </div>
           <div className="mt-1">
             <Github></Github>

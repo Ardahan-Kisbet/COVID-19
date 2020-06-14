@@ -220,6 +220,22 @@ function SetMap() {
     }
   };
 
+  // display clicked country's chart
+  const updateChart = (evt) => {
+    let countryExist = false;
+    map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+      if (layer) {
+        if (layer.get("name") === "country") {
+          if (feature) {
+            let searchCountry = feature.get("name");
+            console.log(searchCountry);
+            callback(searchCountry);
+          }
+        }
+      }
+    });
+  };
+
   map.on("pointermove", function (evt) {
     if (evt.dragging) {
       return;
@@ -231,6 +247,9 @@ function SetMap() {
   map.on("click", function (evt) {
     displayFeatureInfo(evt.pixel);
     displayTooltip(evt);
+
+    // change chart
+    updateChart(evt);
   });
 
   map.getView().on("change:resolution", function (evt) {
@@ -255,7 +274,6 @@ function SetDiseasedCountries() {
 }
 
 function AddCoordinateFeatures(elem) {
-  // var geom = new Point(fromLonLat([coordinates[index].x, locations[index].y]));
   var geom = new Point(fromLonLat([elem.x, elem.y]));
   var feature = new Feature(geom);
   feature.setProperties(elem);
@@ -263,9 +281,11 @@ function AddCoordinateFeatures(elem) {
   dataSource.addFeature(feature);
 }
 
-function MapObject() {
-  // to run function only once give [] as second parameter
+var callback;
 
+function MapObject(props) {
+  // to run function only once give [] as second parameter
+  callback = props.SetCountryName;
   async function FetchData() {
     // Wait for response
     await GetCountryStateData()
