@@ -5,6 +5,20 @@ import { GetCountryStateData } from "../data";
 var ctx = null;
 var chart;
 var backupData = null;
+const monthsReference = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 async function FetchData(countryName) {
   // Wait for response
@@ -21,20 +35,6 @@ async function FetchData(countryName) {
       // find out month names
       let labels = [];
       let data = [];
-      let monthsReference = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
 
       active.detailedCase.forEach((elem) => {
         if (elem.month < monthsReference.length) {
@@ -81,13 +81,13 @@ async function FetchData(countryName) {
 async function ReDraw(countryName) {
   // Wait for response
 
-  // make this search according to selection on map later!
   let active = backupData.find((elem) => {
     return elem.countryName === countryName;
   });
 
-  // TODO geojson country naöme ile data arasındaki country nameler birebir örtüşmüyor hepsinde.
+  // TODO geojson country name ile data arasındaki country nameler birebir örtüşmüyor hepsinde.
   // Lookup table yap!
+
   if (!active) {
     active = backupData.find((elem) => {
       return elem.countryName === "Turkey";
@@ -97,20 +97,6 @@ async function ReDraw(countryName) {
   // find out month names
   let labels = [];
   let data = [];
-  let monthsReference = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
 
   active.detailedCase.forEach((elem) => {
     if (elem.month < monthsReference.length) {
@@ -122,41 +108,12 @@ async function ReDraw(countryName) {
   // TODO kodu kısalt- tekrar kodları sil
   // https://www.chartjs.org/docs/latest/developers/updates.html
 
-  chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: "line",
-
-    // The data for our dataset
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Count",
-          // backgroundColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgb(255, 255, 255, 0)",
-          borderColor: "rgb(255, 99, 132)",
-          data: data,
-        },
-      ],
-    },
-
-    // Configuration options go here
-    options: {
-      title: {
-        display: true,
-        text: `Monthly Disease Count of ${active.countryName}`,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-    },
-  });
-}
-
-function cleanChart() {
-  chart.data.labels.pop();
+  chart.clear();
+  chart.data.labels = labels;
   chart.data.datasets.forEach((dataset) => {
-    dataset.data.pop();
+    dataset.data = data;
   });
+  chart.options.title.text = `Monthly Disease Count of ${active.countryName}`;
   chart.update();
 }
 
