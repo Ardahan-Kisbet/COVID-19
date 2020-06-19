@@ -222,13 +222,12 @@ function SetMap() {
 
   // display clicked country's chart
   const updateChart = (evt) => {
-    let countryExist = false;
     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
       if (layer) {
         if (layer.get("name") === "country") {
           if (feature) {
             let searchCountry = feature.get("name");
-            console.log(searchCountry);
+            // callback to update chart line according to selected country
             callback(searchCountry);
           }
         }

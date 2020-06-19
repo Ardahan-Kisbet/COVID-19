@@ -1,10 +1,20 @@
 import React, { useEffect } from "react";
-import Chart from "chart.js";
+import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
 
 var ctx = null;
-var chart;
-var backupData = null;
+var Chart = {
+  Init: () => {
+    // Cold Start
+    FetchData("Turkey");
+  },
+  Update: (countryName) => {
+    ReDraw(countryName);
+  },
+  chart: null,
+  backupData: null,
+};
+
 const monthsReference = [
   "January",
   "February",
@@ -25,7 +35,7 @@ async function FetchData(countryName) {
   await GetCountryStateData()
     .then((res) => {
       // store it for further use!
-      backupData = res;
+      Chart.backupData = res;
 
       // make this search according to selection on map later!
       let active = res.find((elem) => {
@@ -44,7 +54,7 @@ async function FetchData(countryName) {
       });
 
       ctx = document.getElementById("myChart").getContext("2d");
-      chart = new Chart(ctx, {
+      Chart.chart = new ChartComponent(ctx, {
         // The type of chart we want to create
         type: "line",
 
@@ -81,7 +91,7 @@ async function FetchData(countryName) {
 async function ReDraw(countryName) {
   // Wait for response
 
-  let active = backupData.find((elem) => {
+  let active = Chart.backupData.find((elem) => {
     return elem.countryName === countryName;
   });
 
@@ -89,7 +99,7 @@ async function ReDraw(countryName) {
   // Lookup table yap!
 
   if (!active) {
-    active = backupData.find((elem) => {
+    active = Chart.backupData.find((elem) => {
       return elem.countryName === "Turkey";
     });
   }
@@ -108,30 +118,27 @@ async function ReDraw(countryName) {
   // TODO kodu kısalt- tekrar kodları sil
   // https://www.chartjs.org/docs/latest/developers/updates.html
 
-  chart.clear();
-  chart.data.labels = labels;
-  chart.data.datasets.forEach((dataset) => {
+  Chart.chart.clear();
+  Chart.chart.data.labels = labels;
+  Chart.chart.data.datasets.forEach((dataset) => {
     dataset.data = data;
   });
-  chart.options.title.text = `Monthly Disease Count of ${active.countryName}`;
-  chart.update();
-}
-
-function updateChart(countryName) {
-  ReDraw(countryName);
+  Chart.chart.options.title.text = `Monthly Disease Count of ${active.countryName}`;
+  Chart.chart.update();
 }
 
 function ChartCanvas(props) {
   useEffect(() => {
     // Initial State
-    FetchData("Turkey");
+    Chart.Init();
   }, []);
 
   useEffect(() => {
     // At first time we know that chart will be null
     // So that, take prop update only after initialization
-    if (chart) {
-      updateChart(props.CountryName);
+    if (Chart.chart) {
+      // if chart is not null than update it
+      Chart.Update(props.CountryName);
     }
   }, [props.CountryName]);
   return <canvas id="myChart"></canvas>;
