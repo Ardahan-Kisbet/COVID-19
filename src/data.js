@@ -150,4 +150,6 @@ const GetCountryStateData = async function () {
   });
 };
 
-export { GetCountryStateData };
+const LookupTable = () => {};
+
+export { GetCountryStateData, LookupTable };

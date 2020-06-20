@@ -4,15 +4,38 @@ import { GetCountryStateData } from "../data";
 
 var ctx = null;
 var Chart = {
+  chart: null,
+  backupData: null,
   Init: () => {
     // Cold Start
     FetchData("Turkey");
   },
-  Update: (countryName) => {
-    ReDraw(countryName);
+  Update: (countryName, labels, data) => {
+    // update chart data
+    Chart.chart.clear();
+    Chart.chart.data.labels = labels;
+    Chart.chart.data.datasets.forEach((dataset) => {
+      dataset.data = data;
+    });
+    Chart.chart.options.title.text = `Monthly Disease Count of ${countryName}`;
+    Chart.chart.update();
   },
-  chart: null,
-  backupData: null,
+  Lookup: (data, countryName) => {
+    // filter countries with given name
+    let found = data.filter((elem) => {
+      return elem.countryName === countryName;
+    });
+
+    // Defensive
+    if (found.length < 1) {
+      found = data.filter((elem) => {
+        return elem.countryName === "Turkey";
+      });
+    }
+
+    // return array of countries
+    return found;
+  },
 };
 
 const monthsReference = [
@@ -89,42 +112,33 @@ async function FetchData(countryName) {
 }
 
 async function ReDraw(countryName) {
-  // Wait for response
-
-  let active = Chart.backupData.find((elem) => {
-    return elem.countryName === countryName;
-  });
-
-  // TODO geojson country name ile data arasındaki country nameler birebir örtüşmüyor hepsinde.
-  // Lookup table yap!
-
-  if (!active) {
-    active = Chart.backupData.find((elem) => {
-      return elem.countryName === "Turkey";
-    });
-  }
+  let countries = Chart.Lookup(Chart.backupData, countryName);
 
   // find out month names
   let labels = [];
   let data = [];
-
-  active.detailedCase.forEach((elem) => {
+  // each country has same length of month so check the first one
+  countries[0].detailedCase.forEach((elem) => {
     if (elem.month < monthsReference.length) {
+      // labels for each month
       labels.push(monthsReference[elem.month]);
-      data.push(elem.count);
+
+      // init data with 0 for each month
+      data.push(0);
     }
   });
 
-  // TODO kodu kısalt- tekrar kodları sil
-  // https://www.chartjs.org/docs/latest/developers/updates.html
-
-  Chart.chart.clear();
-  Chart.chart.data.labels = labels;
-  Chart.chart.data.datasets.forEach((dataset) => {
-    dataset.data = data;
+  // fill up monthly counts from filtered country list
+  countries.forEach((country) => {
+    let i = 0;
+    country.detailedCase.forEach((elem) => {
+      data[i] += elem.count;
+      ++i;
+    });
   });
-  Chart.chart.options.title.text = `Monthly Disease Count of ${active.countryName}`;
-  Chart.chart.update();
+
+  // renew chart data
+  Chart.Update(countryName, labels, data);
 }
 
 function ChartCanvas(props) {
@@ -138,7 +152,7 @@ function ChartCanvas(props) {
     // So that, take prop update only after initialization
     if (Chart.chart) {
       // if chart is not null than update it
-      Chart.Update(props.CountryName);
+      ReDraw(props.CountryName);
     }
   }, [props.CountryName]);
   return <canvas id="myChart"></canvas>;

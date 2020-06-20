@@ -73,7 +73,12 @@ function Github() {
           console.log("error on getRepoCounts(): " + err);
         });
     }
-  }, []);
+  }, [
+    cookies.totalRepoCount,
+    cookies.monthlyRepoCount,
+    setCookie,
+    removeCookie,
+  ]);
 
   return (
     <table className="table table-secondary table-hover">
