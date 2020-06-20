@@ -207,7 +207,16 @@ function SetMap() {
           if (feature) {
             tooltip.style.display = "";
             tooltipOverlay.setPosition(evt.coordinate);
-            tooltip.innerHTML = `Total Disease: ${feature.get("totalCase")}`;
+
+            let text = "";
+            if (feature.get("stateName") != null) {
+              text = `Total Disease (${feature.get(
+                "stateName"
+              )}): ${feature.get("totalCase")}`;
+            } else {
+              text = `Total Disease: ${feature.get("totalCase")}`;
+            }
+            tooltip.innerHTML = text;
             circleExist = true;
           }
         }

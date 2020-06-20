@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
+import CountryLookupTable from "../assets/countriesLookupTable";
 
 var ctx = null;
 var Chart = {
@@ -23,7 +24,7 @@ var Chart = {
   Lookup: (data, countryName) => {
     // filter countries with given name
     let found = data.filter((elem) => {
-      return elem.countryName === countryName;
+      return elem.countryName === CountryLookupTable[countryName];
     });
 
     // Defensive
