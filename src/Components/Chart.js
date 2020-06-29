@@ -11,11 +11,13 @@ var Chart = {
     // Cold Start
     FetchData("Turkey");
   },
-  Update: (countryName, labels, data) => {
+  Update: (countryName, labels, data, total) => {
     // update chart data
     Chart.chart.clear();
     Chart.chart.data.labels = labels;
     Chart.chart.data.datasets.forEach((dataset) => {
+      // there is only one dataset in array
+      dataset.label = `Total: ${total}`;
       dataset.data = data;
     });
     Chart.chart.options.title.text = `Monthly Disease Count of ${countryName}`;
@@ -87,7 +89,7 @@ async function FetchData(countryName) {
           labels: labels,
           datasets: [
             {
-              label: "Count",
+              label: `Total: ${active.totalCase}`,
               // backgroundColor: "rgb(255, 99, 132)",
               backgroundColor: "rgb(255, 255, 255, 0)",
               borderColor: "rgb(255, 99, 132)",
@@ -130,7 +132,9 @@ async function ReDraw(countryName) {
   });
 
   // fill up monthly counts from filtered country list
+  let total = 0;
   countries.forEach((country) => {
+    total += country.totalCase;
     let i = 0;
     country.detailedCase.forEach((elem) => {
       data[i] += elem.count;
@@ -139,7 +143,7 @@ async function ReDraw(countryName) {
   });
 
   // renew chart data
-  Chart.Update(countryName, labels, data);
+  Chart.Update(countryName, labels, data, total);
 }
 
 function ChartCanvas(props) {
