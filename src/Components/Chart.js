@@ -17,10 +17,13 @@ var Chart = {
     Chart.chart.data.labels = labels;
     Chart.chart.data.datasets.forEach((dataset) => {
       // there is only one dataset in array
-      dataset.label = `Total: ${total}`;
+      dataset.label = "";
       dataset.data = data;
     });
-    Chart.chart.options.title.text = `Monthly Disease Count of ${countryName}`;
+    Chart.chart.options.title.text = [
+      `Monthly Disease Count of ${countryName}`,
+      `(Total: ${total})`,
+    ];
     Chart.chart.update();
   },
   Lookup: (data, countryName) => {
@@ -89,10 +92,10 @@ async function FetchData(countryName) {
           labels: labels,
           datasets: [
             {
-              label: `Total: ${active.totalCase}`,
+              label: "",
               // backgroundColor: "rgb(255, 99, 132)",
               backgroundColor: "rgb(255, 255, 255, 0)",
-              borderColor: "rgb(255, 99, 132)",
+              borderColor: "rgb(240, 94, 35)",
               data: data,
             },
           ],
@@ -102,7 +105,10 @@ async function FetchData(countryName) {
         options: {
           title: {
             display: true,
-            text: `Monthly Disease Count of ${active.countryName}`,
+            text: [
+              `Monthly Disease Count of ${active.countryName}`,
+              `(Total: ${active.totalCase})`,
+            ],
           },
           responsive: true,
           maintainAspectRatio: false,
