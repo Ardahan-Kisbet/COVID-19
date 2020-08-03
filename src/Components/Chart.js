@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
 import CountryLookupTable from "../assets/countriesLookupTable";
+import { findByLabelText } from "@testing-library/react";
 
-let notFound = false;
 var ctx = null;
 var Chart = {
   chart: null,
@@ -120,16 +120,13 @@ async function FetchData(countryName) {
     });
 }
 
-async function ReDraw(props) {
-  let countries = Chart.Lookup(Chart.backupData, props.CountryName);
+async function ReDraw(CountryName) {
+  let countries = Chart.Lookup(Chart.backupData, CountryName);
 
   if (countries === null) {
     // then display "Not Found" component!
-    notFound = true;
-    console.log("not found");
+    return false;
   } else {
-    notFound = false;
-    console.log("found");
     // find out month names
     let labels = [];
     let data = [];
@@ -156,11 +153,14 @@ async function ReDraw(props) {
     });
 
     // renew chart data
-    Chart.Update(props.CountryName, labels, data, total);
+    Chart.Update(CountryName, labels, data, total);
   }
+
+  return true;
 }
 
 function ChartCanvas(props) {
+  const [dataFound, setDataFound] = useState(true);
   useEffect(() => {
     // Initial State
     Chart.Init();
@@ -169,16 +169,37 @@ function ChartCanvas(props) {
   useEffect(() => {
     // At first time we know that chart will be null
     // So that, take prop update only after initialization
-    if (Chart.chart) {
-      // if chart is not null than update it
-      ReDraw(props);
+    async function draw() {
+      if (Chart.chart) {
+        // if chart is not null than update it
+        setDataFound(await ReDraw(props.CountryName));
+      }
     }
+
+    draw();
   }, [props.CountryName]);
 
-  return <canvas id="myChart"></canvas>;
-
-  // console.log("not found in render");
-  // return <div style={{ background: "red" }}>test</div>;
+  // Note!: Do not remove chart canvas from DOM if data is not found since Chart Canvas is configurated only in INIT state via FetchData function
+  // Just re-arrange visiblity on DOM
+  return (
+    <div className="h-100">
+      <canvas
+        id="myChart"
+        style={{ display: dataFound === false ? "none" : "block" }}
+      ></canvas>
+      <div
+        style={{
+          background: "lightblue",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          display: dataFound === false ? "flex" : "none",
+        }}
+      >
+        <strong>No Data Found for This Country</strong>
+      </div>
+    </div>
+  );
 }
 
 export default ChartCanvas;
