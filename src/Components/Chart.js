@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
 import CountryLookupTable from "../assets/countriesLookupTable";
 
+let notFound = false;
 var ctx = null;
 var Chart = {
   chart: null,
@@ -34,9 +35,8 @@ var Chart = {
 
     // Defensive
     if (found.length < 1) {
-      found = data.filter((elem) => {
-        return elem.countryName === "Turkey";
-      });
+      // If there is no data for selected country then show "Not Found" component
+      found = null;
     }
 
     // return array of countries
@@ -120,36 +120,44 @@ async function FetchData(countryName) {
     });
 }
 
-async function ReDraw(countryName) {
-  let countries = Chart.Lookup(Chart.backupData, countryName);
+async function ReDraw(props) {
+  let countries = Chart.Lookup(Chart.backupData, props.CountryName);
 
-  // find out month names
-  let labels = [];
-  let data = [];
-  // each country has same length of month so check the first one
-  countries[0].detailedCase.forEach((elem) => {
-    if (elem.month < monthsReference.length) {
-      // labels for each month
-      labels.push(monthsReference[elem.month]);
+  if (countries === null) {
+    // then display "Not Found" component!
+    notFound = true;
+    console.log("not found");
+  } else {
+    notFound = false;
+    console.log("found");
+    // find out month names
+    let labels = [];
+    let data = [];
+    // each country has same length of month so check the first one
+    countries[0].detailedCase.forEach((elem) => {
+      if (elem.month < monthsReference.length) {
+        // labels for each month
+        labels.push(monthsReference[elem.month]);
 
-      // init data with 0 for each month
-      data.push(0);
-    }
-  });
-
-  // fill up monthly counts from filtered country list
-  let total = 0;
-  countries.forEach((country) => {
-    total += country.totalCase;
-    let i = 0;
-    country.detailedCase.forEach((elem) => {
-      data[i] += elem.count;
-      ++i;
+        // init data with 0 for each month
+        data.push(0);
+      }
     });
-  });
 
-  // renew chart data
-  Chart.Update(countryName, labels, data, total);
+    // fill up monthly counts from filtered country list
+    let total = 0;
+    countries.forEach((country) => {
+      total += country.totalCase;
+      let i = 0;
+      country.detailedCase.forEach((elem) => {
+        data[i] += elem.count;
+        ++i;
+      });
+    });
+
+    // renew chart data
+    Chart.Update(props.CountryName, labels, data, total);
+  }
 }
 
 function ChartCanvas(props) {
@@ -163,10 +171,14 @@ function ChartCanvas(props) {
     // So that, take prop update only after initialization
     if (Chart.chart) {
       // if chart is not null than update it
-      ReDraw(props.CountryName);
+      ReDraw(props);
     }
   }, [props.CountryName]);
+
   return <canvas id="myChart"></canvas>;
+
+  // console.log("not found in render");
+  // return <div style={{ background: "red" }}>test</div>;
 }
 
 export default ChartCanvas;
