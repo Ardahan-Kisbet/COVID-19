@@ -31,10 +31,10 @@ function App() {
           </div>
           <div className="mt-1 d-flex bg-light">
             <div className="w-50">
-              <Github></Github>
+              <PieChartCanvas CountryName={countryName}></PieChartCanvas>
             </div>
             <div className="w-50">
-              <PieChartCanvas CountryName={countryName}></PieChartCanvas>
+              <Github></Github>
             </div>
           </div>
           <div className="d-flex flex-column mt-auto">

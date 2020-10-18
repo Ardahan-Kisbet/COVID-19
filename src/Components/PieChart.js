@@ -8,11 +8,36 @@ var Chart = {
   chart: null,
   backupDataDeaths: null,
   backupDataRecovered: null,
+  labels: ["Deaths", "Recoveries"],
   Init: () => {
     // Cold Start
     FetchData("Turkey");
   },
-  Update: () => {},
+  Update: (data) => {
+    // update chart data
+    Chart.chart.clear();
+    Chart.chart.data.labels = Chart.labels;
+    Chart.chart.data.datasets.forEach((dataset) => {
+      // there is only one dataset in array
+      dataset.data = data;
+    });
+    Chart.chart.update();
+  },
+  Lookup: (data, countryName) => {
+    // filter countries with given name
+    let found = data.filter((elem) => {
+      return elem.countryName === CountryLookupTable[countryName];
+    });
+
+    // Defensive
+    if (found.length < 1) {
+      // If there is no data for selected country then show "Not Found" component
+      found = null;
+    }
+
+    // return array of countries
+    return found;
+  },
 };
 
 async function FetchData(countryName) {
@@ -47,7 +72,7 @@ async function FetchData(countryName) {
 
   // And for a doughnut chart
   ctx = document.getElementById("myPieChart").getContext("2d");
-  var myDoughnutChart = new ChartComponent(ctx, {
+  Chart.chart = new ChartComponent(ctx, {
     type: "doughnut",
     data: {
       datasets: [
@@ -64,13 +89,42 @@ async function FetchData(countryName) {
       ],
 
       // These labels appear in the legend and in the tooltips when hovering different arcs
-      labels: ["Deaths", "Recoveries"],
+      labels: Chart.labels,
     },
     //options: options
   });
 }
 
-async function ReDraw(CountryName) {}
+async function ReDraw(CountryName) {
+  let countriesForDeaths = Chart.Lookup(Chart.backupDataDeaths, CountryName);
+  let countriesForRecoveries = Chart.Lookup(
+    Chart.backupDataRecovered,
+    CountryName
+  );
+
+  if (countriesForDeaths === null || countriesForRecoveries === null) {
+    // then display "Not Found" component!
+    return false;
+  } else {
+    let data,
+      totalDeath = 0,
+      totalRecovery = 0;
+    countriesForDeaths.forEach((country) => {
+      totalDeath += country.totalCase;
+      console.log(country.totalCase);
+    });
+    countriesForRecoveries.forEach((country) => {
+      totalRecovery += country.totalCase;
+    });
+
+    data = [totalDeath, totalRecovery];
+
+    // renew chart data
+    Chart.Update(data);
+  }
+
+  return true;
+}
 
 function PieChartCanvas(props) {
   useEffect(() => {
