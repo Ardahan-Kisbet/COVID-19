@@ -81,7 +81,7 @@ function Github() {
   ]);
 
   return (
-    <table className="table table-secondary table-hover">
+    <table className="table table-hover">
       <tbody>
         <tr>
           <td>Total number of COVID related repositories on Github</td>

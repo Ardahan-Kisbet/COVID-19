@@ -17,15 +17,32 @@ const HEROKU_CORS_PROXY_URL = "https://cors-anywhere.herokuapp.com";
 const rawDataSource =
   "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
 
-const GET_URL = HEROKU_CORS_PROXY_URL + "/" + rawDataSource;
+// use deaths raw data from CSSEGISandData repository on github
+// https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv
+const deathsDataSource =
+  "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+
+// use recovered raw data from CSSEGISandData repository on github
+// https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv
+const recoveredDataSource =
+  "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
+
+const GET_URL_RAW_DATA = HEROKU_CORS_PROXY_URL + "/" + rawDataSource;
+const GET_URL_DEATHS_DATA = HEROKU_CORS_PROXY_URL + "/" + deathsDataSource;
+const GET_URL_RECOVERED_DATA =
+  HEROKU_CORS_PROXY_URL + "/" + recoveredDataSource;
 
 const rawDataBackup = require("./assets/rawDataBackup.csv");
+const rawDeathsDataBackup = require("./assets/rawDeathsDataBackup.csv");
+const rawRecoveredDataBackup = require("./assets/rawRecoveredDataBackup.csv");
 
 /**
  * raw data variable will be used to prevent repetitive request to
  * original github repository. Fetch it once and use it!
  */
 let rawData = null;
+let rawDeathsData = null;
+let rawRecoveredData = null;
 
 /**
  * This function is used for preparing raw data either from original
@@ -37,7 +54,7 @@ const GetRawData = () => {
     if (rawData === null) {
       // If rawData is null then we haven't request to original data yet.
       // proceed with data request
-      Papa.parse(GET_URL, {
+      Papa.parse(GET_URL_RAW_DATA, {
         header: false,
         skipEmptyLines: true,
         download: true,
@@ -72,6 +89,94 @@ const GetRawData = () => {
     } else {
       // If rawData is not null then we already have got our data, return it.
       resolve(rawData);
+    }
+  });
+};
+
+const GetRawDeathsData = () => {
+  return new Promise((resolve) => {
+    if (rawDeathsData === null) {
+      // If rawDeathsData is null then we haven't request to original data yet.
+      // proceed with data request
+      Papa.parse(GET_URL_DEATHS_DATA, {
+        header: false,
+        skipEmptyLines: true,
+        download: true,
+        dynamicTyping: true, //ensures that numbers not turned to strings
+        complete: (res) => {
+          // Fetch at once. Store it to rawDeathsData to use it later!
+          rawDeathsData = res;
+          resolve(rawDeathsData);
+        },
+        error: (err) => {
+          // If we can not fetch live data from given url try to load
+          // backup data from assets/rawDeathsDataBackup.csv
+          Papa.parse(rawDeathsDataBackup, {
+            header: false,
+            skipEmptyLines: true,
+            download: true,
+            dynamicTyping: true, //ensures that numbers not turned to strings
+            complete: (res) => {
+              // Backup data successfully loaded. Store it to rawDeathsData to use it later!
+              rawDeathsData = res;
+              resolve(rawDeathsData);
+            },
+            error: (err) => {
+              // this block of code should not be executed at all if backup
+              // data is not corrupted - Defensive
+              rawDeathsData = null;
+              resolve(rawDeathsData);
+            },
+          });
+        },
+      });
+    } else {
+      // If rawData is not null then we already have got our data, return it.
+      resolve(rawDeathsData);
+    }
+  });
+};
+
+const GetRawRecoveredData = () => {
+  return new Promise((resolve) => {
+    if (rawRecoveredData === null) {
+      // If rawRecoveredData is null then we haven't request to original data yet.
+      // proceed with data request
+      Papa.parse(GET_URL_RECOVERED_DATA, {
+        header: false,
+        skipEmptyLines: true,
+        download: true,
+        dynamicTyping: true, //ensures that numbers not turned to strings
+        complete: (res) => {
+          // Fetch at once. Store it to rawRecoveredData to use it later!
+          rawRecoveredData = res;
+          resolve(rawRecoveredData);
+        },
+        error: (err) => {
+          // If we can not fetch live data from given url try to load
+          // backup data from assets/rawRecoveredDataBackup.csv
+          Papa.parse(rawRecoveredDataBackup, {
+            header: false,
+            skipEmptyLines: true,
+            download: true,
+            dynamicTyping: true, //ensures that numbers not turned to strings
+            complete: (res) => {
+              // Backup data successfully loaded. Store it to rawRecoveredData to use it later!
+              rawRecoveredData = res;
+              resolve(rawRecoveredData);
+            },
+            error: (err) => {
+              // this block of code should not be executed at all if backup
+              // data is not corrupted - Defensive
+              rawRecoveredData = null;
+              resolve(rawRecoveredData);
+            },
+          });
+        },
+      });
+    } else {
+      // If rawData is not null then we already have got our data, return it.
+      resolve(rawRecoveredData);
     }
   });
 };
@@ -150,6 +255,135 @@ const GetCountryStateData = async function () {
   });
 };
 
+/**
+ * This function is used for getting all Death Cases for each country
+ */
+const GetDeathsGlobalData = async function () {
+  return new Promise((resolve) => {
+    GetRawDeathsData().then((raw) => {
+      let months = [];
+      let totalCol = raw.data[0].length;
+      for (let i = dataStartIndex; i < totalCol; ++i) {
+        let currMonth = new Date(raw.data[0][i]).getMonth();
+        let isExist = months.findIndex((x) => x.month === currMonth);
+        if (isExist === -1) {
+          // if we encounter with new month then add it to month array
+          // by giving day count as 1
+          months.push({ month: currMonth, daysCount: 1 });
+        } else {
+          // if already exist in month array just increase day count by 1
+          months[isExist].daysCount++;
+        }
+      }
+      // now we have our month/day array as ready to be used death cases counting
+
+      // get rid of first line since it is header-column
+      raw.data = raw.data.slice(1, raw.data.length);
+
+      let deaths = [];
+      raw.data.forEach((row) => {
+        let caseByMonth = [];
+        let i = dataStartIndex;
+        let prevCount = 0;
+        months.forEach((m) => {
+          let count = 0;
+
+          // this is the total case count at the end of the each month
+          count = row[i + m.daysCount - 1];
+
+          // now we have our monthly disease count here
+          caseByMonth.push({
+            month: m.month,
+            days: m.daysCount,
+            count: count - prevCount,
+          });
+          prevCount = count;
+
+          // set next iteration index which will be used in for loop j element
+          i += m.daysCount;
+        });
+
+        // sum all individual monthly data to find total count at the end
+        let totalCase = caseByMonth.reduce((sum, elem) => sum + elem.count, 0);
+        deaths.push({
+          countryName: row[countryIndex] || "Undefined",
+          stateName: row[stateIndex] || null,
+          totalCase: totalCase,
+          detailedCase: caseByMonth,
+        });
+      });
+      resolve(deaths);
+    });
+  });
+};
+
+/**
+ * This function is used for getting all Recovered Cases for each country
+ */
+const GetRecoveredGlobalData = async function () {
+  return new Promise((resolve) => {
+    GetRawRecoveredData().then((raw) => {
+      let months = [];
+      let totalCol = raw.data[0].length;
+      for (let i = dataStartIndex; i < totalCol; ++i) {
+        let currMonth = new Date(raw.data[0][i]).getMonth();
+        let isExist = months.findIndex((x) => x.month === currMonth);
+        if (isExist === -1) {
+          // if we encounter with new month then add it to month array
+          // by giving day count as 1
+          months.push({ month: currMonth, daysCount: 1 });
+        } else {
+          // if already exist in month array just increase day count by 1
+          months[isExist].daysCount++;
+        }
+      }
+      // now we have our month/day array as ready to be used recovered cases counting
+
+      // get rid of first line since it is header-column
+      raw.data = raw.data.slice(1, raw.data.length);
+
+      let recoveries = [];
+      raw.data.forEach((row) => {
+        let caseByMonth = [];
+        let i = dataStartIndex;
+        let prevCount = 0;
+        months.forEach((m) => {
+          let count = 0;
+
+          // this is the total case count at the end of the each month
+          count = row[i + m.daysCount - 1];
+
+          // now we have our monthly disease count here
+          caseByMonth.push({
+            month: m.month,
+            days: m.daysCount,
+            count: count - prevCount,
+          });
+          prevCount = count;
+
+          // set next iteration index which will be used in for loop j element
+          i += m.daysCount;
+        });
+
+        // sum all individual monthly data to find total count at the end
+        let totalCase = caseByMonth.reduce((sum, elem) => sum + elem.count, 0);
+        recoveries.push({
+          countryName: row[countryIndex] || "Undefined",
+          stateName: row[stateIndex] || null,
+          totalCase: totalCase,
+          detailedCase: caseByMonth,
+        });
+      });
+      resolve(recoveries);
+    });
+  });
+};
+
 const LookupTable = () => {};
 
-export { GetCountryStateData, LookupTable };
+export {
+  GetCountryStateData,
+  GetRecoveredGlobalData,
+  GetDeathsGlobalData,
+  LookupTable,
+};

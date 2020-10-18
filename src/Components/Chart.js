@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
 import CountryLookupTable from "../assets/countriesLookupTable";
-import { findByLabelText } from "@testing-library/react";
 
 var ctx = null;
 var Chart = {
@@ -93,7 +92,6 @@ async function FetchData(countryName) {
           datasets: [
             {
               label: "",
-              // backgroundColor: "rgb(255, 99, 132)",
               backgroundColor: "rgb(255, 255, 255, 0)",
               borderColor: "rgb(240, 94, 35)",
               data: data,

@@ -4,6 +4,8 @@ import "./App.scss";
 import Map from "./Components/Map";
 // get chart component
 import ChartCanvas from "./Components/Chart";
+// get pie chart component
+import PieChartCanvas from "./Components/PieChart";
 // get github component
 import Github from "./Components/Github";
 // import github icon
@@ -27,8 +29,13 @@ function App() {
           <div className="bg-light" style={{ height: "250px" }}>
             <ChartCanvas CountryName={countryName}></ChartCanvas>
           </div>
-          <div className="mt-1">
-            <Github></Github>
+          <div className="mt-1 d-flex bg-light">
+            <div className="w-50">
+              <Github></Github>
+            </div>
+            <div className="w-50">
+              <PieChartCanvas CountryName={countryName}></PieChartCanvas>
+            </div>
           </div>
           <div className="d-flex flex-column mt-auto">
             <div id="location">Location: </div>
