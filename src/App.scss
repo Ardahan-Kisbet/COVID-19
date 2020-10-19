@@ -53,3 +53,8 @@ body {
   white-space: nowrap;
   font: 10pt sans-serif;
 }
+
+.flexWrap {
+  display: flex;
+  flex-wrap: wrap;
+}

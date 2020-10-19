@@ -29,11 +29,11 @@ function App() {
           <div className="bg-light" style={{ height: "250px" }}>
             <ChartCanvas CountryName={countryName}></ChartCanvas>
           </div>
-          <div className="mt-1 d-flex bg-light">
-            <div className="w-50">
+          <div className="mt-1 flexWrap bg-light">
+            <div className="col-md-6 col-sm-12">
               <PieChartCanvas CountryName={countryName}></PieChartCanvas>
             </div>
-            <div className="w-50">
+            <div className="col-md-6 col-sm-12">
               <Github></Github>
             </div>
           </div>
