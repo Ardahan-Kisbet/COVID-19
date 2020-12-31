@@ -43,7 +43,8 @@ const rawRecoveredDataBackup = require("./assets/rawRecoveredDataBackup.csv");
 let rawData = null;
 let rawDeathsData = null;
 let rawRecoveredData = null;
-
+let coordinates = [];
+let coordinates2 = 0;
 /**
  * This function is used for preparing raw data either from original
  * CSSEGISandData github repository or local backup file rawDataBackup.csv
@@ -190,67 +191,76 @@ const GetRawRecoveredData = () => {
 const GetCountryStateData = async function () {
   return new Promise((resolve) => {
     GetRawData().then((raw) => {
-      let months = [];
-      let totalCol = raw.data[0].length;
-      for (let i = dataStartIndex; i < totalCol; ++i) {
-        let currMonth = new Date(raw.data[0][i]).getMonth();
-        let isExist = months.findIndex((x) => x.month === currMonth);
-        if (isExist === -1) {
-          // if we encounter with new month then add it to month array
-          // by giving day count as 1
-          months.push({ month: currMonth, daysCount: 1 });
-        } else {
-          // if already exist in month array just increase day count by 1
-          months[isExist].daysCount++;
+      if (coordinates === undefined || coordinates.length === 0) {
+        // array empty or does not exist
+        // fetch from external source and store it!
+        let months = [];
+        let totalCol = raw.data[0].length;
+        for (let i = dataStartIndex; i < totalCol; ++i) {
+          let currMonth = new Date(raw.data[0][i]).getMonth();
+          let isExist = months.findIndex((x) => x.month === currMonth);
+          if (isExist === -1) {
+            // if we encounter with new month then add it to month array
+            // by giving day count as 1
+            months.push({ month: currMonth, daysCount: 1 });
+          } else {
+            // if already exist in month array just increase day count by 1
+            months[isExist].daysCount++;
+          }
         }
-      }
-      // now we have our month/day array as ready to be used disease counting
+        // now we have our month/day array as ready to be used disease counting
 
-      // get rid of first line since it is header-column
-      raw.data = raw.data.slice(1, raw.data.length);
+        // get rid of first line since it is header-column
+        raw.data = raw.data.slice(1, raw.data.length);
 
-      let coordinates = [];
-      raw.data.forEach((row) => {
-        let caseByMonth = [];
-        let i = dataStartIndex;
-        let prevCount = 0;
-        months.forEach((m) => {
-          let count = 0;
+        raw.data.forEach((row) => {
+          let caseByMonth = [];
+          let i = dataStartIndex;
+          let prevCount = 0;
+          months.forEach((m) => {
+            let count = 0;
 
-          // this is the total case count at the end of the each month
-          count = row[i + m.daysCount - 1];
+            // this is the total case count at the end of the each month
+            count = row[i + m.daysCount - 1];
 
-          // now we have our monthly disease count here
-          caseByMonth.push({
-            month: m.month,
-            days: m.daysCount,
-            count: count - prevCount,
+            // now we have our monthly disease count here
+            caseByMonth.push({
+              month: m.month,
+              days: m.daysCount,
+              count: count - prevCount,
+            });
+            prevCount = count;
+
+            // set next iteration index which will be used in for loop j element
+            i += m.daysCount;
           });
-          prevCount = count;
 
-          // set next iteration index which will be used in for loop j element
-          i += m.daysCount;
+          // sum all individual monthly data to find total count at the end
+          let totalCase = caseByMonth.reduce(
+            (sum, elem) => sum + elem.count,
+            0
+          );
+
+          coordinates.push({
+            countryName: row[countryIndex] || "Undefined",
+            stateName: row[stateIndex] || null,
+            totalCase: totalCase,
+            detailedCase: caseByMonth,
+            x: row[longitudeIndex] || 0,
+            y: row[latitudeIndex] || 0,
+          });
         });
 
-        // sum all individual monthly data to find total count at the end
-        let totalCase = caseByMonth.reduce((sum, elem) => sum + elem.count, 0);
-
-        coordinates.push({
-          countryName: row[countryIndex] || "Undefined",
-          stateName: row[stateIndex] || null,
-          totalCase: totalCase,
-          detailedCase: caseByMonth,
-          x: row[longitudeIndex] || 0,
-          y: row[latitudeIndex] || 0,
+        // filter empty coordinates
+        coordinates = coordinates.filter((elem) => {
+          return elem.x !== 0 && elem.y !== 0;
         });
-      });
 
-      // filter empty coordinates
-      coordinates = coordinates.filter((elem) => {
-        return elem.x !== 0 && elem.y !== 0;
-      });
-
-      resolve(coordinates);
+        resolve(coordinates);
+      } else {
+        // If coordinates is not null then we already have got our data, return it.
+        resolve(coordinates);
+      }
     });
   });
 };

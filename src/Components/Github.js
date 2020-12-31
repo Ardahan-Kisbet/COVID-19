@@ -92,7 +92,6 @@ function Github() {
             <tr key={index}>
               <td>Repo Counts on {months[index]}</td>
               <td>{countByMonth.value}</td>
-              {/* <div key={countByMonth.id}> */}
             </tr>
           ))}
       </tbody>
