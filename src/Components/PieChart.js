@@ -111,7 +111,6 @@ async function ReDraw(CountryName) {
       totalRecovery = 0;
     countriesForDeaths.forEach((country) => {
       totalDeath += country.totalCase;
-      console.log(country.totalCase);
     });
     countriesForRecoveries.forEach((country) => {
       totalRecovery += country.totalCase;
