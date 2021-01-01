@@ -10,5 +10,5 @@ Track on Map
 Track on Chart
 <img src= "public/Chart.png">
 
-A different perspective: Covid related repositories created on Github after Jan, 2020
+Detailed Data and a different perspective: Covid related repositories created on Github after Jan, 2020
 <img src= "public/GithubData.png">
