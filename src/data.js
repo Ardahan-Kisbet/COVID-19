@@ -44,7 +44,6 @@ let rawData = null;
 let rawDeathsData = null;
 let rawRecoveredData = null;
 let coordinates = [];
-let coordinates2 = 0;
 /**
  * This function is used for preparing raw data either from original
  * CSSEGISandData github repository or local backup file rawDataBackup.csv
