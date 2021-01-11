@@ -196,12 +196,22 @@ const GetCountryStateData = async function () {
         let months = [];
         let totalCol = raw.data[0].length;
         for (let i = dataStartIndex; i < totalCol; ++i) {
-          let currMonth = new Date(raw.data[0][i]).getMonth();
-          let isExist = months.findIndex((x) => x.month === currMonth);
+          let date = new Date(raw.data[0][i]);
+          let currMonth = date.getMonth();
+          let currYear = date.getFullYear();
+          let isExist = months.findIndex(
+            (x) => x.key === currMonth + "(" + currYear + ")"
+          );
           if (isExist === -1) {
             // if we encounter with new month then add it to month array
             // by giving day count as 1
-            months.push({ month: currMonth, daysCount: 1 });
+            // store months with years i.e. May (2020) as a KEY
+            months.push({
+              key: currMonth + "(" + currYear + ")",
+              daysCount: 1,
+              month: currMonth,
+              year: currYear,
+            });
           } else {
             // if already exist in month array just increase day count by 1
             months[isExist].daysCount++;
@@ -224,9 +234,11 @@ const GetCountryStateData = async function () {
 
             // now we have our monthly disease count here
             caseByMonth.push({
-              month: m.month,
+              key: m.key,
               days: m.daysCount,
               count: count - prevCount,
+              month: m.month,
+              year: m.year,
             });
             prevCount = count;
 

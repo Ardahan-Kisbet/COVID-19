@@ -76,7 +76,7 @@ async function FetchData(countryName) {
 
       active.detailedCase.forEach((elem) => {
         if (elem.month < monthsReference.length) {
-          labels.push(monthsReference[elem.month]);
+          labels.push(monthsReference[elem.month] + "(" + elem.year + ")");
           data.push(elem.count);
         }
       });
@@ -132,7 +132,7 @@ async function ReDraw(CountryName) {
     countries[0].detailedCase.forEach((elem) => {
       if (elem.month < monthsReference.length) {
         // labels for each month
-        labels.push(monthsReference[elem.month]);
+        labels.push(monthsReference[elem.month] + "(" + elem.year + ")");
 
         // init data with 0 for each month
         data.push(0);
