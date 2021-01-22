@@ -292,7 +292,6 @@ function AddCoordinateFeatures(elem) {
 var callback;
 
 function MapObject(props) {
-  // to run function only once give [] as second parameter
   callback = props.SetCountryName;
   async function FetchData() {
     // Wait for response
@@ -305,14 +304,15 @@ function MapObject(props) {
       });
 
     // now coordinates are ready - set map data
-    SetMap();
     SetDiseasedCountries();
     coordinates.forEach((elem) => {
       AddCoordinateFeatures(elem);
     });
   }
 
+  // to run function only once give [] empty array as second parameter
   useEffect(() => {
+    SetMap();
     FetchData();
   }, []);
 

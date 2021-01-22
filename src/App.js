@@ -56,6 +56,15 @@ function App() {
           </div>
         </div>
       </div>
+      <aside className="aside">
+        Tech Stack
+        <ul>
+          <li>ReactJS</li>
+          <li>Openlayers</li>
+          <li>ChartJS</li>
+          <li>Github API</li>
+        </ul>
+      </aside>
     </div>
   );
 }
