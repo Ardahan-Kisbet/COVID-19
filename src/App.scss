@@ -6,6 +6,13 @@
   @include font-size(2rem);
 }
 
+@media only screen and(max-width: 570px) {
+  .badges,
+  #info {
+    @include font-size(0.8rem);
+  }
+}
+
 // CSS
 
 html,
@@ -13,6 +20,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .content {
@@ -59,23 +67,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-  .aside {
-    position: absolute;
-    top: 15%;
-    right: 3%;
-    border-radius: 25px;
-    background: #73ad21;
-    padding: 20px;
-    width: 200px;
-    height: 250px;
-  }
-}
-
-/* remaining devices (991px and down) */
-@media only screen and (max-width: 991px) {
-  .aside {
-    display: none;
-  }
+.badges > * {
+  margin-right: 5px;
 }

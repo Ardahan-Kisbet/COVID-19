@@ -21,7 +21,15 @@ function App() {
             <div className="title text-center">
               COVID Disease Tracker by Country
             </div>
-            <div className="ml-auto" id="info"></div>
+            <div className="d-flex flex-row">
+              <div className="badges">
+                <span className="badge badge-warning">React.js</span>
+                <span className="badge badge-info">OpenLayers</span>
+                <span className="badge badge-success">Chart.js</span>
+                <span className="badge badge-dark">Github API</span>
+              </div>
+              <div className="ml-auto" id="info"></div>
+            </div>
           </div>
           <div className="mb-1" style={{ height: "400px" }}>
             <Map SetCountryName={setCountryName}></Map>
@@ -56,15 +64,6 @@ function App() {
           </div>
         </div>
       </div>
-      <aside className="aside">
-        Tech Stack
-        <ul>
-          <li>ReactJS</li>
-          <li>Openlayers</li>
-          <li>ChartJS</li>
-          <li>Github API</li>
-        </ul>
-      </aside>
     </div>
   );
 }
