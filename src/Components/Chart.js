@@ -3,10 +3,16 @@ import ChartComponent from "chart.js";
 import { GetCountryStateData } from "../data";
 import CountryLookupTable from "../assets/countriesLookupTable";
 
+const ChartRangeEnum = {
+  ONE_YEAR: "one_year",
+  THREE_YEAR: "three_year",
+};
+
 var ctx = null;
 var Chart = {
   chart: null,
   backupData: null,
+  chartRange: ChartRangeEnum.ONE_YEAR,
   Init: () => {
     // Cold Start
     FetchData("Turkey");
@@ -41,6 +47,28 @@ var Chart = {
     // return array of countries
     return found;
   },
+  FilterChartRange: (unfilteredCountryDiseaseData) => {
+    // Filter raw country disease data in regards to current chart range selection
+    switch (Chart.chartRange) {
+      case ChartRangeEnum.ONE_YEAR:
+        // current date
+        let dateRangeEnd = new Date();
+        // go back 1 year
+        let dateRangeStart = new Date(dateRangeEnd.valueOf());
+        dateRangeStart.setFullYear(dateRangeEnd.getFullYear() - 1);
+        dateRangeStart.setDate(1);
+        // filter only cases in date range
+        return unfilteredCountryDiseaseData.filter((currentCase) => {
+          let currentCasesDate = new Date(currentCase.year, currentCase.month);
+          return (
+            dateRangeStart <= currentCasesDate &&
+            currentCasesDate <= dateRangeEnd
+          );
+        });
+      default:
+      // don't know yet what to do!
+    }
+  },
 };
 
 const monthsReference = [
@@ -73,8 +101,8 @@ async function FetchData(countryName) {
       // find out month names
       let labels = [];
       let data = [];
-
-      active.detailedCase.forEach((elem) => {
+      let filteredData = Chart.FilterChartRange(active.detailedCase);
+      filteredData.forEach((elem) => {
         if (elem.month < monthsReference.length) {
           labels.push(monthsReference[elem.month] + "(" + elem.year + ")");
           data.push(elem.count);
@@ -128,8 +156,9 @@ async function ReDraw(CountryName) {
     // find out month names
     let labels = [];
     let data = [];
+
     // each country has same length of month so check the first one
-    countries[0].detailedCase.forEach((elem) => {
+    Chart.FilterChartRange(countries[0].detailedCase).forEach((elem) => {
       if (elem.month < monthsReference.length) {
         // labels for each month
         labels.push(monthsReference[elem.month] + "(" + elem.year + ")");
@@ -144,7 +173,7 @@ async function ReDraw(CountryName) {
     countries.forEach((country) => {
       total += country.totalCase;
       let i = 0;
-      country.detailedCase.forEach((elem) => {
+      Chart.FilterChartRange(country.detailedCase).forEach((elem) => {
         data[i] += elem.count;
         ++i;
       });
