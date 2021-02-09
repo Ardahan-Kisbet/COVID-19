@@ -19,7 +19,7 @@ function App() {
         <div className="d-flex flex-column w-100 h-100">
           <div className="d-flex flex-column">
             <div className="title text-center">
-              COVID Disease Tracker by Country
+              COVID Disease Tracker By Country
             </div>
             <div className="d-flex flex-row">
               <div className="badges">

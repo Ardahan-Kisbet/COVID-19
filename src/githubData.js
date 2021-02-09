@@ -33,7 +33,6 @@ export const getRepoCounts = () => {
     .then(
       axios.spread((...responses) => {
         return responses;
-        // const res1 = responses[0];
       })
     )
     .catch((err) => {
