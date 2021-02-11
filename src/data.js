@@ -12,8 +12,6 @@ const longitudeIndex = 3;
 const dataStartIndex = 4;
 // 4, 5, 6 ... and so on --> result day by day start from 1/22/2020
 
-// TO prevent cors issue use public heroku proxy
-const HEROKU_CORS_PROXY_URL = "https://cors-anywhere.herokuapp.com";
 const rawDataSource =
   "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
 
@@ -27,10 +25,9 @@ const deathsDataSource =
 const recoveredDataSource =
   "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
 
-const GET_URL_RAW_DATA = HEROKU_CORS_PROXY_URL + "/" + rawDataSource;
-const GET_URL_DEATHS_DATA = HEROKU_CORS_PROXY_URL + "/" + deathsDataSource;
-const GET_URL_RECOVERED_DATA =
-  HEROKU_CORS_PROXY_URL + "/" + recoveredDataSource;
+const GET_URL_RAW_DATA = rawDataSource;
+const GET_URL_DEATHS_DATA = deathsDataSource;
+const GET_URL_RECOVERED_DATA = recoveredDataSource;
 
 const rawDataBackup = require("./assets/rawDataBackup.csv");
 const rawDeathsDataBackup = require("./assets/rawDeathsDataBackup.csv");
