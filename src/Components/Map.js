@@ -25,7 +25,7 @@ import {
   styleForCountry,
   styleForPoint,
   styleForHighlight,
-  styleForDiseased,
+  styleForSelectedCountry,
   initRadius,
 } from "./styles";
 
@@ -61,15 +61,6 @@ var tileLayer = new TileLayer({
 
 var tooltip = null;
 var tooltipOverlay = null;
-
-var diseasedCountryLayerSource = new VectorSource({});
-var diseasedCountryLayer = new VectorLayer({
-  name: "diseased",
-  source: diseasedCountryLayerSource,
-  style: function (feature) {
-    return styleForDiseased;
-  },
-});
 
 var duration = 3000;
 function flash(feature) {
@@ -116,7 +107,7 @@ function SetMap() {
   if (map === null) {
     map = new Map({
       target: "map",
-      layers: [tileLayer, countryLayer, diseasedCountryLayer, dataLayer],
+      layers: [tileLayer, countryLayer, dataLayer],
       view: new View({
         center: [0, 0],
         zoom: 0,
@@ -134,6 +125,8 @@ function SetMap() {
     map.addOverlay(tooltipOverlay);
   }
 
+  // Seperate Layer Definitions
+  /////////////////////////////
   var featureOverlayCountry = new VectorLayer({
     source: new VectorSource(),
     map: map,
@@ -153,7 +146,19 @@ function SetMap() {
     zIndex: 1,
   });
 
+  var featureSelectedCountry = new VectorLayer({
+    source: new VectorSource(),
+    map: map,
+    style: function (feature) {
+      styleForSelectedCountry.getText().setText(feature.get("name"));
+      return styleForSelectedCountry;
+    },
+    zIndex: 0,
+  });
+  /////////////////////////////
+
   var highlightCountry;
+  var selectedCountry;
   var highlightData;
   var displayFeatureInfo = function (pixel) {
     var info = document.getElementById("info");
@@ -244,6 +249,31 @@ function SetMap() {
     });
   };
 
+  // paint selected country
+  const selectCountry = (pixel) => {
+    map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+      if (layer) {
+        // handle country layer and data layer seperately
+        switch (layer.get("name")) {
+          case "country":
+            if (feature !== selectedCountry) {
+              if (selectedCountry) {
+                featureSelectedCountry
+                  .getSource()
+                  .removeFeature(selectedCountry);
+              }
+              if (feature) {
+                featureSelectedCountry.getSource().addFeature(feature);
+              }
+              selectedCountry = feature;
+            }
+            break;
+          default:
+        }
+      }
+    });
+  };
+
   map.on("pointermove", function (evt) {
     if (evt.dragging) {
       return;
@@ -254,6 +284,7 @@ function SetMap() {
 
   map.on("click", function (evt) {
     displayFeatureInfo(evt.pixel);
+    selectCountry(evt.pixel);
     displayTooltip(evt);
 
     // change chart

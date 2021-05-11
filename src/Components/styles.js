@@ -43,11 +43,10 @@ const styleForHighlight = new Style({
   }),
 });
 
-const styleForDiseased = styleForCountry.clone();
-styleForDiseased.setFill(
+const styleForSelectedCountry = styleForCountry.clone();
+styleForSelectedCountry.setFill(
   new Fill({
-    // color: "rgba(255, 255, 255, 0.75)",
-    color: "rgba(0, 0, 0, 0.25)",
+    color: "rgb(240, 94, 35, 0.75)",
   })
 );
 
@@ -55,6 +54,6 @@ export {
   styleForCountry,
   styleForPoint,
   styleForHighlight,
-  styleForDiseased,
+  styleForSelectedCountry,
   initRadius,
 };
