@@ -41,7 +41,8 @@ function App() {
             <div className="col-md-6 col-sm-12">
               <PieChartCanvas CountryName={countryName}></PieChartCanvas>
             </div>
-            <div className="col-md-6 col-sm-12">
+            <div className="col-md-6 col-sm-12"></div>
+            <div className="">
               <Github></Github>
             </div>
           </div>

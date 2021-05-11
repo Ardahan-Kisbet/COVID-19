@@ -13,6 +13,7 @@ export const getTotalRepoCount = () => {
     });
 };
 
+// Not needed anymore - decide whether it is useful for the future!
 export const getRepoCounts = () => {
   const urls = [
     "https://api.github.com/search/repositories?q=covid OR coronavirus in:name,description+created:2020-01-01..2020-01-31",
