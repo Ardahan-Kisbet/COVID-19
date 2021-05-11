@@ -93,7 +93,6 @@ async function FetchData(countryName) {
       // store it for further use!
       Chart.backupData = res;
 
-      // make this search according to selection on map later!
       let active = res.find((elem) => {
         return elem.countryName === countryName;
       });

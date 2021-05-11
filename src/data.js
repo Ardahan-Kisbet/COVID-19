@@ -397,11 +397,4 @@ const GetRecoveredGlobalData = async function () {
   });
 };
 
-const LookupTable = () => {};
-
-export {
-  GetCountryStateData,
-  GetRecoveredGlobalData,
-  GetDeathsGlobalData,
-  LookupTable,
-};
+export { GetCountryStateData, GetRecoveredGlobalData, GetDeathsGlobalData };

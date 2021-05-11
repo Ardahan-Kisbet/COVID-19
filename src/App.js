@@ -6,6 +6,8 @@ import Map from "./Components/Map";
 import ChartCanvas from "./Components/Chart";
 // get pie chart component
 import PieChartCanvas from "./Components/PieChart";
+// get country details component
+import CountryDetails from "./Components/CountryDetails";
 // get github component
 import Github from "./Components/Github";
 // import github icon
@@ -41,8 +43,10 @@ function App() {
             <div className="col-md-6 col-sm-12">
               <PieChartCanvas CountryName={countryName}></PieChartCanvas>
             </div>
-            <div className="col-md-6 col-sm-12"></div>
-            <div className="">
+            <div className="col-md-6 col-sm-12">
+              <CountryDetails CountryName={countryName}></CountryDetails>
+            </div>
+            <div>
               <Github></Github>
             </div>
           </div>

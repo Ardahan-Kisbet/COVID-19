@@ -49,12 +49,13 @@ async function FetchData(countryName) {
     // store it for further use!
     Chart.backupDataDeaths = res;
 
-    // make this search according to selection on map later!
-    let active = res.find((elem) => {
-      return elem.countryName === countryName;
+    let actives = res.filter((elem) => {
+      return elem.countryName === CountryLookupTable[countryName];
     });
 
-    totalDeath = active.totalCase;
+    actives.forEach((active) => {
+      totalDeath += active.totalCase;
+    });
   });
 
   // Wait for response
@@ -62,12 +63,13 @@ async function FetchData(countryName) {
     // store it for further use!
     Chart.backupDataRecovered = res;
 
-    // make this search according to selection on map later!
-    let active = res.find((elem) => {
-      return elem.countryName === countryName;
+    let actives = res.filter((elem) => {
+      return elem.countryName === CountryLookupTable[countryName];
     });
 
-    totalRecover = active.totalCase;
+    actives.forEach((active) => {
+      totalRecover += active.totalCase;
+    });
   });
 
   // And for a doughnut chart
@@ -126,6 +128,7 @@ async function ReDraw(CountryName) {
 }
 
 function PieChartCanvas(props) {
+  const [dataFound, setDataFound] = useState(true);
   useEffect(() => {
     // Initial State
     Chart.Init();
@@ -137,7 +140,11 @@ function PieChartCanvas(props) {
     async function draw() {
       if (Chart.chart) {
         // if chart is not null than update it
-        await ReDraw(props.CountryName);
+        if (await ReDraw(props.CountryName)) {
+          setDataFound(true);
+        } else {
+          setDataFound(false);
+        }
       }
     }
 
@@ -145,7 +152,10 @@ function PieChartCanvas(props) {
   }, [props.CountryName]);
   return (
     <div>
-      <canvas id="myPieChart"></canvas>
+      <canvas
+        id="myPieChart"
+        style={{ display: dataFound === false ? "none" : "block" }}
+      ></canvas>
     </div>
   );
 }
